@@ -21,8 +21,6 @@ public class SceneManager {
 		case 2:
 			return new Scene2(GameInformationMaster.GameObject);
 		}
-		System.out.println("Error");
-		return null;	
-
+		return null;
 	}
 }

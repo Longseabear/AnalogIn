@@ -33,6 +33,10 @@ public class Scene1 extends SceneManager {
 	
 	public Scene1(Analogin _tableSimulator) {
 		GameObject = _tableSimulator;
+		GameObject.currentScene = this;
+		//Input µî·Ï
+		GameInformationMaster.keyInputBuffer = new KeyInputBuffer();
+		GameInformationMaster.keyInputBuffer.start();
 		// Icon normal
 		testButton.setBounds(500, 500, 400, 100);
 		testButton.setBorderPainted(false);

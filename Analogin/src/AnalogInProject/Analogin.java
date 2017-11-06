@@ -19,7 +19,9 @@ public class Analogin extends JFrame {
  // 크기에 맞추어 처리한 예
 	
 	public Analogin() {
+		//GameInformationMaster Init
 		GameInformationMaster.GameObject = this;
+		
 		setUndecorated(true);
 		setTitle("Table Simulator");
 		setSize(Main.SCREEN_SIZE_X, Main.SCREEN_SIZE_Y);
@@ -30,12 +32,15 @@ public class Analogin extends JFrame {
 		setBackground(new Color(0, 0, 0, 0));
 		setLayout(null);
 
-		currentScene = SceneManager.createScene(1);
+		//init key
+		
+		
+		SceneManager.createScene(1);
 	}
 	
 	public void changeScene(SceneManager preScene, int i){
 		preScene.removeScene();
-		currentScene = SceneManager.createScene(i);
+		SceneManager.createScene(i);
 	}
 	
 	// double buffer
