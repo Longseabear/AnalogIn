@@ -49,7 +49,6 @@ public class Scene_CreateGame extends SceneManager {
 		// Input 등록
 		GIM.keyInputBuffer = new KeyInputBuffer();
 		GIM.keyInputBuffer.start();		
-		
 		GIM.blockObject = blockObject;
 		
 		// Block의 우선순위
