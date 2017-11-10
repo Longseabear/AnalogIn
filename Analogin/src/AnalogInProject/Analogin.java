@@ -15,12 +15,11 @@ public class Analogin extends JFrame {
 	private Image screenImage;
 	private Graphics screenGraphic;
 
-	public SceneManager currentScene = null;
  // 크기에 맞추어 처리한 예
 	
 	public Analogin() {
 		//GameInformationMaster Init
-		GameInformationMaster.GameObject = this;
+		GIM.GameObject = this;
 		
 		setUndecorated(true);
 		setTitle("Table Simulator");
@@ -33,14 +32,12 @@ public class Analogin extends JFrame {
 		setLayout(null);
 
 		//init key
-		
-		
-		SceneManager.createScene(1);
+		SceneManager.createScene("CreateGame");
 	}
 	
-	public void changeScene(SceneManager preScene, int i){
+	public void changeScene(SceneManager preScene, String str){
 		preScene.removeScene();
-		SceneManager.createScene(i);
+		SceneManager.createScene(str);
 	}
 	
 	// double buffer
@@ -48,9 +45,8 @@ public class Analogin extends JFrame {
 		screenImage = createImage(Main.SCREEN_SIZE_X, Main.SCREEN_SIZE_Y);
 		screenGraphic = screenImage.getGraphics();
 		
-		if(currentScene != null)
-			currentScene.screenDraw(screenGraphic);
+		if(GIM.currentScene != null)
+			GIM.currentScene.screenDraw(screenGraphic);
 		g.drawImage(screenImage, 0, 0, null);
 	}
-
 }

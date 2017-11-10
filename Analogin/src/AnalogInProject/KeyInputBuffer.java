@@ -7,16 +7,17 @@ public class KeyInputBuffer extends Thread {
 	// 모든 클라이언트의 시간을 맞추어 행동을 정의 해주어야 함.
 	// 즉 쓰레드로 동작해야만 한다.
 	// 5초에 한번씩 인풋명령을 수행
-	ArrayList<Block> bl = GameInformationMaster.GameObject.currentScene.blockObject;
-	Analogin GameObject = GameInformationMaster.GameObject;
+	Analogin GameObject = GIM.GameObject;
 	public ArrayList<String> input = new ArrayList<String>();
 	
 	//Turn Timer
 	int timer = 0;
 	private void processInputBuffer()
 	{
-		@SuppressWarnings("unchecked")
 		ArrayList<String> temp = (ArrayList<String>) input.clone();
+		 synchronized(input){
+				input.clear();
+		 }
 		for(String s : temp){
 			// TYPE_OBJECTNUMBER_X_Y_OPTION
 			String[] commend = s.split("_");
@@ -26,32 +27,38 @@ public class KeyInputBuffer extends Thread {
 			int y = Integer.parseInt(commend[3]);
 			if(commend[0].equals("CLICK")){
 	//			System.out.println("ok");
-				GameInformationMaster.GameObject.remove(bl.get(objNum));
-				GameInformationMaster.GameObject.add(bl.get(objNum),0);
+				GIM.GameObject.remove(GIM.blockObject.get(objNum));
+				GIM.GameObject.add(GIM.blockObject.get(objNum),GIM.blockPriority);
 			}
-			if(commend[0].equals("MOVE")){
+			else if(commend[0].equals("MOVE")){
 	//			System.out.println("ok2");
-				bl.get(objNum).setLocation(x, y);
+				GIM.blockObject.get(objNum).setLocation(x, y);
 			}
 		}
-
-		 synchronized(input){
-				input.clear();
-		 }
 	}
 	public synchronized void playIn(String s)
 	{
 		 synchronized(input){
-				input.add(s + "_" + timer);
+				input.add(s + "_" + (int)System.nanoTime()/1000000);
 		 }
 	}
+	
 	@Override
 	public void run(){
 		try{
 			do{
-				Thread.sleep(200);
-//				System.out.println(System.nanoTime());
+				long start = System.nanoTime();
 				processInputBuffer();
+				long end = System.nanoTime();
+				int runningTime = (int)(end-start)/1000000;
+				if(runningTime<GIM.turnTime)
+					Thread.sleep(GIM.turnTime-runningTime);
+				else
+				{
+					Thread.sleep(100);
+					System.out.println("error");
+				}
+				// 일단은 그냥 대기지만, 처리하는 방식을 바꾸어 주어야 한다.
 			}while(true);
 		}catch(Exception e){
 			System.out.println(e.getMessage());

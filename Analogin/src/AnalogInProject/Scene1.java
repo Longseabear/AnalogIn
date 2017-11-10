@@ -12,7 +12,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class Scene1 extends SceneManager {
-	private Analogin GameObject; // Root Class
 	
 	/************************************************
 	   Resource
@@ -31,12 +30,12 @@ public class Scene1 extends SceneManager {
 	private JButton testButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage.getScaledInstance(400, 100, Image.SCALE_SMOOTH)));
 	
-	public Scene1(Analogin _tableSimulator) {
-		GameObject = _tableSimulator;
-		GameObject.currentScene = this;
+	public Scene1() {
+		GIM.currentScene = this;
 		//Input 등록
-		GameInformationMaster.keyInputBuffer = new KeyInputBuffer();
-		GameInformationMaster.keyInputBuffer.start();
+		GIM.keyInputBuffer = new KeyInputBuffer();
+		GIM.keyInputBuffer.start();
+		
 		// Icon normal
 		testButton.setBounds(500, 500, 400, 100);
 		testButton.setBorderPainted(false);
@@ -58,38 +57,38 @@ public class Scene1 extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// 눌렀을때 처리 화면을 바꿔보자.
-				GameObject.changeScene(thisInstance, 2);
+				GIM.GameObject.changeScene(thisInstance, "CreateGame");
 			}
 		});
-		GameObject.add(testButton); // JFrame에 버튼을 추가.
+		GIM.GameObject.add(testButton); // JFrame에 버튼을 추가.
 		systemObject.add(testButton);
 
 		blockObject.add(new Block(new BlockInformation(400,300,300,300,ImageManager.testButtonImage)));
 		blockObject.add(new Block(new BlockInformation(500,100,300,300,ImageManager.testButtonImage)));
 
 		for(Block b : blockObject){
-			GameObject.add(b);	
+			GIM.GameObject.add(b);	
 		}
 		
 		introMusic = new Audio("testMusic.mp3", true);
 		introMusic.start();
 		
-		GameObject.repaint();
+		GIM.GameObject.repaint();
 	}
 	@Override
 	public void removeScene()
 	{
 		for(Component c : systemObject){
-			GameObject.remove(c);			
+			GIM.GameObject.remove(c);			
 		}
 		for(Block b : blockObject){
-			GameObject.remove(b);			
+			GIM.GameObject.remove(b);			
 		}
 		introMusic.close();
 	}
 	public void screenDraw(Graphics g) {
 		g.drawImage(background, 0, 0, null);
-		GameObject.paintComponents(g);
-		GameObject.repaint();
+		GIM.GameObject.paintComponents(g);
+		GIM.GameObject.repaint();
 	}
 }

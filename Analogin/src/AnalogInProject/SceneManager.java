@@ -14,12 +14,14 @@ public class SceneManager {
 	public void removeScene(){
 		System.exit(0);
 	}
-	public static SceneManager createScene(int i){
-		switch(i){
-		case 1:
-			return new Scene1(GameInformationMaster.GameObject);
-		case 2:
-			return new Scene2(GameInformationMaster.GameObject);
+	public static SceneManager createScene(String str){
+		switch(str){
+		case "1":
+			return new Scene1();
+		case "2":
+			return new Scene2();
+		case "CreateGame":
+			return new Scene_CreateGame();
 		}
 		return null;
 	}

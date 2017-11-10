@@ -10,16 +10,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class Scene2 extends SceneManager {
-	private Analogin GameObject;
 	private SceneManager thisInstance = this;
 	private JButton testButton = new JButton(
 			new ImageIcon(ImageManager.background.getScaledInstance(400, 100, Image.SCALE_SMOOTH)));
 
 	private Image background = ImageManager.testButtonImage;
 
-	public Scene2(Analogin _tableSimulator) {
-		
-		GameObject = _tableSimulator;
+	public Scene2() {
 		// Icon normal
 		
 		testButton.setBounds(500, 500, 400, 100);
@@ -44,23 +41,23 @@ public class Scene2 extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// 눌렀을때 처리 화면을 바꿔보자.
-				GameObject.changeScene(thisInstance, 1);
+				GIM.GameObject.changeScene(thisInstance, "1");
 			}
 		});
-		GameObject.add(testButton); // JFrame에 버튼을 추가.
+		GIM.GameObject.add(testButton); // JFrame에 버튼을 추가.
 
 
-		GameObject.repaint();
+		GIM.GameObject.repaint();
 	}
 
 	@Override
 	public void removeScene()
 	{
-		GameObject.remove(testButton);		
+		GIM.GameObject.remove(testButton);		
 	}
 	public void screenDraw(Graphics g) {
 		g.drawImage(background, 0, 0, null);
-		GameObject.paintComponents(g);
-		GameObject.repaint();
+		GIM.GameObject.paintComponents(g);
+		GIM.GameObject.repaint();
 	}
 }
