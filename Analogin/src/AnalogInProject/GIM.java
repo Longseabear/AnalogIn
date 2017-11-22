@@ -11,14 +11,14 @@ public class GIM {
 	public static final int FPS = 60;
 	
 	// 유동 오브젝트 [ 각종 Manager ]
-	public static KeyInputBuffer keyInputBuffer;
+	public static KeyInputController keyInputBuffer;
 		
 	// GAME 진행시 필요한 변수목록
 	public static SceneManager currentScene = null;
 	public static int blockPriority = 1;
 	public static Block checkedBlock = null;
 	public static ArrayList<Block> blockObject = null;
-	
+	public static KeyInputCollector currentInputCollector = null;
 	// 유동 변수 소거
 	public static void removeGIM()
 	{

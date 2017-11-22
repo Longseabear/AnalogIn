@@ -35,9 +35,9 @@ public class Block extends JLabel {
 				// System.out.println(blockObject.indexOf(gameObject));
 				mouseX = e.getX();
 				mouseY = e.getY();
-
-				GIM.keyInputBuffer
-						.playIn("CLICK_" + GIM.blockObject.indexOf(gameObject) + "_" + mouseX + "_" + mouseY);
+				if (GIM.currentInputCollector != null)
+					GIM.currentInputCollector
+							.playIn("CLICK_" + GIM.blockObject.indexOf(gameObject) + "_" + mouseX + "_" + mouseY);
 				// GameObject.remove(gameObject);
 				// GameObject.add(gameObject, 0);
 			}
@@ -45,19 +45,16 @@ public class Block extends JLabel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					if(GIM.checkedBlock!=gameObject)
-					{
+					if (GIM.checkedBlock != gameObject) {
 						BlockManager.checkedBlockUpdate(gameObject);
-						gameObject.setBorder(BorderFactory.createLineBorder(Color.RED, 2,true));
+						gameObject.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
 						GIM.checkedBlock = gameObject;
-					}
-					else
-					{
+					} else {
 						gameObject.setBorder(null);
 						GIM.checkedBlock = null;
-						
+
 					}
-						
+
 				}
 			}
 
@@ -82,15 +79,17 @@ public class Block extends JLabel {
 				// getLocationOnScreen().getY());
 				// setLocation(x-GameObject.getLocationOnScreen().x-mouseX,
 				// y-GameObject.getLocationOnScreen().y-mouseY);
-				GIM.keyInputBuffer.playIn("MOVE_" + GIM.blockObject.indexOf(gameObject) + "_"
-						+ (x - GameObject.getLocationOnScreen().x - mouseX) + "_"
-						+ (y - GameObject.getLocationOnScreen().y - mouseY));
+				if (GIM.currentInputCollector != null) {
+					GIM.currentInputCollector.playIn("MOVE_" + GIM.blockObject.indexOf(gameObject) + "_"
+							+ (x - GameObject.getLocationOnScreen().x - mouseX) + "_"
+							+ (y - GameObject.getLocationOnScreen().y - mouseY));
+				}
 			}
 		});
 	}
 
 	public void synBlockInfo() {
-		//ImageIcon은 NULL이 아님을 보장받는다.
+		// ImageIcon은 NULL이 아님을 보장받는다.
 		this.setBounds(blockInfo.x, blockInfo.y, blockInfo.width, blockInfo.height);
 		ImageIcon icon = new ImageIcon(blockInfo.image);
 		icon.getImage().flush();

@@ -47,7 +47,7 @@ public class Scene_CreateGame extends SceneManager {
 		// 
 		GIM.currentScene = this;
 		// Input µî·Ï
-		GIM.keyInputBuffer = new KeyInputBuffer();
+		GIM.keyInputBuffer = new KeyInputController();
 		GIM.keyInputBuffer.start();		
 		GIM.blockObject = blockObject;
 		
@@ -161,6 +161,6 @@ public class Scene_CreateGame extends SceneManager {
 		g.drawImage(image_mainFrame, 15, 35, 860, 670, null);
 		
 		GIM.GameObject.paintComponents(g);
-		GIM.GameObject.repaint();
+//		GIM.GameObject.repaint();
 	}
 }
