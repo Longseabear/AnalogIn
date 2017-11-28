@@ -4,7 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
-import javazoom.jl.player.Player;
+/*import javazoom.jl.player.Player;
 
 public class Audio extends Thread {
 	private Player player;
@@ -48,4 +48,4 @@ public class Audio extends Thread {
 			System.out.println(e.getMessage());
 		}
 	}
-}
+}*/

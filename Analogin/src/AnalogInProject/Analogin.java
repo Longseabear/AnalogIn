@@ -45,9 +45,14 @@ public class Analogin extends JFrame {
 		screenImage = createImage(Main.SCREEN_SIZE_X, Main.SCREEN_SIZE_Y);
 		screenGraphic = screenImage.getGraphics();
 		
-		System.out.println("paint");
 		if(GIM.currentScene != null)
 			GIM.currentScene.screenDraw(screenGraphic);
 		g.drawImage(screenImage, 0, 0, null);
+		try {
+			Thread.sleep(16);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

@@ -36,8 +36,7 @@ public class Block extends JLabel {
 				mouseX = e.getX();
 				mouseY = e.getY();
 				if (GIM.currentInputCollector != null)
-					GIM.currentInputCollector
-							.playIn("CLICK_" + GIM.blockObject.indexOf(gameObject) + "_" + mouseX + "_" + mouseY);
+					GIM.currentInputCollector.playIn("CLICK_" + GIM.blockObject.indexOf(gameObject) + "_" + mouseX + "_" + mouseY);
 				// GameObject.remove(gameObject);
 				// GameObject.add(gameObject, 0);
 			}
@@ -89,7 +88,6 @@ public class Block extends JLabel {
 	}
 
 	public void synBlockInfo() {
-		// ImageIcon은 NULL이 아님을 보장받는다.
 		this.setBounds(blockInfo.x, blockInfo.y, blockInfo.width, blockInfo.height);
 		ImageIcon icon = new ImageIcon(blockInfo.image);
 		icon.getImage().flush();

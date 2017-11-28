@@ -6,19 +6,21 @@ public class GIM {
 	// 부동 오브젝트
 	public static Analogin GameObject;
 	
+	// HOST USER STATUS
+	public static UserInfo me = new UserInfo();
 	// STATUS 게임 외부 변수
 	public static int turnTime = 10;
 	public static final int FPS = 60;
 	
 	// 유동 오브젝트 [ 각종 Manager ]
-	public static KeyInputController keyInputBuffer;
-		
+	public static KeyInputController keyInputBuffer = null;
 	// GAME 진행시 필요한 변수목록
 	public static SceneManager currentScene = null;
 	public static int blockPriority = 1;
 	public static Block checkedBlock = null;
 	public static ArrayList<Block> blockObject = null;
-	public static KeyInputCollector currentInputCollector = null;
+
+	protected static KeyInputCollector currentInputCollector = null;
 	// 유동 변수 소거
 	public static void removeGIM()
 	{

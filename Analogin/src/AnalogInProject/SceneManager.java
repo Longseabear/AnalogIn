@@ -15,14 +15,17 @@ public class SceneManager {
 		System.exit(0);
 	}
 	public static SceneManager createScene(String str){
+		System.out.println("Change into " + str);
 		switch(str){
-		case "1":
-			return new Scene1();
-		case "2":
-			return new Scene2();
 		case "CreateGame":
 			return new Scene_CreateGame();
+		case "Start":
+			return new Scene_Start();
+		case "Lobby":
+			return new Scene_Lobby();
 		}
+
+		System.out.println("ERROR " + str);
 		return null;
 	}
 }
