@@ -1,13 +1,19 @@
 package AnalogInProject;
 
+import java.io.PipedWriter;
 import java.util.ArrayList;
 
 public class GIM {
 	// 부동 오브젝트
 	public static Analogin GameObject;
 	
+	// LOCK
+	public static Object checkedBlockLock = new Object();
+	public static Object updateBlockInfoLock = new Object();
+	
 	// HOST USER STATUS
 	public static UserInfo me = new UserInfo();
+	
 	// STATUS 게임 외부 변수
 	public static int turnTime = 10;
 	public static final int FPS = 60;
@@ -17,10 +23,30 @@ public class GIM {
 	// GAME 진행시 필요한 변수목록
 	public static SceneManager currentScene = null;
 	public static int blockPriority = 1;
-	public static Block checkedBlock = null;
+	private static Block checkedBlock = null;
 	public static ArrayList<Block> blockObject = null;
-
+	
 	protected static KeyInputCollector currentInputCollector = null;
+
+	//GAME CREATE시 필요한 변수목록
+	public static blockChangedListener synUISender = null;
+	public static ArrayList<BlockInformation> loadedBlockInfo = null;
+	
+	public static void setCheckedBlock(Block _b){
+			checkedBlock = _b;
+	}
+	public static void setCheckedBlockCreateRoom(Block _b){
+		checkedBlock = _b;
+		updateData();
+	}
+	public static void updateData(){
+		if(synUISender!=null){
+			synUISender.setUpdaate();
+		}
+	}
+	public static Block getCheckdBlock(){
+		return checkedBlock;
+	}
 	// 유동 변수 소거
 	public static void removeGIM()
 	{

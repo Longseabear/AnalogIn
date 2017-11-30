@@ -1,23 +1,24 @@
 package AnalogInProject;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Scene_CreateGame extends SceneManager {
 	/************************************************
@@ -43,15 +44,19 @@ public class Scene_CreateGame extends SceneManager {
 			new ImageIcon(ImageManager.testButtonImage_3.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	private JButton ruleButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
+	private JButton saveButton = new JButton(
+			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
+	private JButton loadButton = new JButton(
+			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	private JButton exitButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
-	private JButton setupButton = new JButton(
+	public JButton setupButton = new JButton(
 			new ImageIcon(ImageManager.setupImage.getScaledInstance(350, 350, Image.SCALE_SMOOTH)));
-	private JTextField blockNameTextField = new JTextField();
-	private JTextField posXTextField = new JTextField();
-	private JTextField posYTextField = new JTextField();
-	private JTextField sizeXTextField = new JTextField();
-	private JTextField sizeYTextField = new JTextField();
+	public JTextField blockNameTextField = new JTextField();
+	public JTextField posXTextField = new JTextField();
+	public JTextField posYTextField = new JTextField();
+	public JTextField sizeXTextField = new JTextField();
+	public JTextField sizeYTextField = new JTextField();
 	private JButton staticButton = new JButton();
 	private JButton visibleButton = new JButton();
 	private JButton behindButton = new JButton();
@@ -63,12 +68,18 @@ public class Scene_CreateGame extends SceneManager {
 	/************************************************
 	 * GameController
 	 *************************************************/
-
+	private ArrayList<Thread> backendObject = new ArrayList<Thread>();
+	blockChangedListener blockChangeStateListener;
 	Font font1 = new Font("SansSerif", Font.BOLD, 11);
+
+	public void init() throws IOException {
+		blockChangeStateListener = new blockChangedListener(this);
+		GIM.synUISender = blockChangeStateListener;
+		backendObject.add(blockChangeStateListener);
+	}
 
 	/// GAME APPLICATION이 실행될 때 반드시 초기화해야하는 GIM 변수
 	/// - KeyInputBuffer / GIM-currentScene / GIM-blockPriority // BlockObject
-	/// -
 	public Scene_CreateGame() {
 		//
 		GIM.currentScene = this;
@@ -80,7 +91,15 @@ public class Scene_CreateGame extends SceneManager {
 		// Block의 우선순위
 		GIM.blockPriority = 1;
 
+		// init
+		try {
+			init();
+		} catch (Exception e) {
+			System.out.println("INIT ERRORR");
+		}
+		;
 		// setup
+		setupButton.setVisible(false);
 		setupButton.setBounds(902, 210, 350, 350);
 		setupButton.setBorderPainted(false); // 버튼 배치 테스트 때문에 true로 변경
 		setupButton.setContentAreaFilled(false); // 채우지마
@@ -94,6 +113,25 @@ public class Scene_CreateGame extends SceneManager {
 		blockNameTextField.setFont(font1);
 		blockNameTextField.setBorder(BorderFactory.createEmptyBorder());
 		blockNameTextField.setHorizontalAlignment(JTextField.CENTER);
+		blockNameTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if(GIM.getCheckdBlock()!=null)
+					GIM.getCheckdBlock().blockInfo.blockName = blockNameTextField.getText();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				if(GIM.getCheckdBlock()!=null)
+					GIM.getCheckdBlock().blockInfo.blockName = blockNameTextField.getText();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			// implement the methods
+		});
 		setupButton.add(blockNameTextField);
 
 		// setup -> pos X Y
@@ -102,6 +140,40 @@ public class Scene_CreateGame extends SceneManager {
 		posXTextField.setFont(font1);
 		posXTextField.setBorder(BorderFactory.createEmptyBorder());
 		posXTextField.setHorizontalAlignment(JTextField.CENTER);
+		posXTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String val = posXTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.x = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockPosition();
+						}
+					});
+				}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String val = posXTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.x = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockPosition();
+						}
+					});
+				}
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			// implement the methods
+		});
 		setupButton.add(posXTextField);
 
 		posYTextField.setBounds(260, 125, 60, 30);
@@ -109,6 +181,41 @@ public class Scene_CreateGame extends SceneManager {
 		posYTextField.setFont(font1);
 		posYTextField.setBorder(BorderFactory.createEmptyBorder());
 		posYTextField.setHorizontalAlignment(JTextField.CENTER);
+		posYTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String val = posYTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.y = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockPosition();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String val = posYTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.y = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockPosition();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			// implement the methods
+		});
 		setupButton.add(posYTextField);
 		// setup -> size X Y
 		sizeXTextField.setBounds(170, 175, 60, 30);
@@ -116,6 +223,42 @@ public class Scene_CreateGame extends SceneManager {
 		sizeXTextField.setFont(font1);
 		sizeXTextField.setBorder(BorderFactory.createEmptyBorder());
 		sizeXTextField.setHorizontalAlignment(JTextField.CENTER);
+		sizeXTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String val = sizeXTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.width = Integer.parseInt(val);
+							
+							GIM.getCheckdBlock().synBlockImage();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String val = sizeXTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.width = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockImage();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			// implement the methods
+		});
 		setupButton.add(sizeXTextField);
 
 		sizeYTextField.setBounds(260, 175, 60, 30);
@@ -123,7 +266,43 @@ public class Scene_CreateGame extends SceneManager {
 		sizeYTextField.setFont(font1);
 		sizeYTextField.setBorder(BorderFactory.createEmptyBorder());
 		sizeYTextField.setHorizontalAlignment(JTextField.CENTER);
+		sizeYTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String val = sizeYTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.height = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockImage();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String val = sizeYTextField.getText();
+				if (isNum(val)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							GIM.getCheckdBlock().blockInfo.height = Integer.parseInt(val);
+							GIM.getCheckdBlock().synBlockImage();
+						}
+					});
+
+				}
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			// implement the methods
+		});
 		setupButton.add(sizeYTextField);
+
 		// setup -> static
 		staticButton.setBounds(114, 278, 27, 27);
 		staticButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
@@ -147,12 +326,14 @@ public class Scene_CreateGame extends SceneManager {
 				staticButton.setVisible(true);
 			}
 		});
+
 		setupButton.add(staticButton);
 		// setup -> visible
 		visibleButton.setBounds(285, 277, 27, 27);
 		visibleButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		visibleButton.setContentAreaFilled(false); // 채우지마
 		visibleButton.setFocusPainted(false);
+		visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
 		visibleButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -168,7 +349,20 @@ public class Scene_CreateGame extends SceneManager {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				visibleButton.setVisible(true);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if(visibleButton.getIcon()!=null)
+						{
+							visibleButton.setIcon(null);
+							GIM.getCheckdBlock().blockInfo.isVisible = false;
+						}
+						else
+						{
+							visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+							GIM.getCheckdBlock().blockInfo.isVisible = true;							
+						}
+					}
+				});
 			}
 		});
 		setupButton.add(visibleButton);
@@ -196,6 +390,7 @@ public class Scene_CreateGame extends SceneManager {
 				visibleButton.setVisible(true);
 			}
 		});
+
 		setupButton.add(behindButton);
 		// setup -> bottom
 		bottomButton.setBounds(187, 315, 74, 27);
@@ -269,7 +464,7 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		setupButton.add(topButton);
-		
+
 		// button
 		createBlockButton.setBounds(910, 90, 100, 100);
 		createBlockButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
@@ -315,11 +510,11 @@ public class Scene_CreateGame extends SceneManager {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (GIM.checkedBlock != null) {
+				if (GIM.getCheckdBlock() != null) {
 					String path = ImageManager.loadImage();
-					if (path != null && GIM.checkedBlock != null) {
-						GIM.checkedBlock.blockInfo.setImagePath(path);
-						GIM.checkedBlock.synBlockInfo();
+					if (path != null && GIM.getCheckdBlock() != null) {
+						GIM.getCheckdBlock().blockInfo.setImagePath(path);
+						GIM.getCheckdBlock().synBlockInfo();
 					}
 				}
 			}
@@ -365,8 +560,8 @@ public class Scene_CreateGame extends SceneManager {
 		createBlockField.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println(e.getX() + " " + e.getY());
-				Block b = new Block(new BlockInformation(e.getX(), e.getY(), 300, 300, ""));
+//				System.out.println(e.getX() + " " + e.getY());
+				Block b = new Block(new BlockInformation(e.getX(), e.getY(), 30, 30, ""), 1);
 				blockObject.add(b);
 				GIM.GameObject.add(b, GIM.blockPriority);
 				createBlockField.setVisible(false);
@@ -398,6 +593,67 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		systemObject.add(ruleButton);
+		
+		// save button
+		saveButton.setBounds(1090, 580, 175, 50);
+		saveButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
+		saveButton.setContentAreaFilled(false); // 채우지마
+		saveButton.setFocusPainted(false);
+		saveButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				saveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				saveButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				//save
+				String saveforder = SaveLoadManager.getSaveDirectory();
+				String gameName = Scene_CreateGame.setGameName();
+						
+				if(saveforder!=null && gameName.equals(""))
+					SaveLoadManager.saveMap(blockObject, saveforder, "Chess rule", gameName);
+			}
+		});
+		systemObject.add(saveButton);
+
+		// save button
+		loadButton.setBounds(1090, 645, 175, 50);
+		loadButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
+		loadButton.setContentAreaFilled(false); // 채우지마
+		loadButton.setFocusPainted(false);
+		loadButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				loadButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				loadButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ArrayList<BlockInformation> blockInfo = null;
+				//save
+				String loadpath = SaveLoadManager.getLoadDirectory();
+				if(loadpath!=null)
+					blockInfo = SaveLoadManager.loadMap(loadpath);
+				GIM.loadedBlockInfo = blockInfo;
+				GIM.GameObject.changeScene(thisInstance, "CreateGame");
+			}
+		});
+		systemObject.add(loadButton);
 
 		// exit button
 		exitButton.setBounds(1220, 8, 29, 29);
@@ -422,11 +678,16 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		systemObject.add(exitButton);
-		// blockObject.add(new Block(new
-		// BlockInformation(400,300,300,300,ImageManager.testButtonImage)));
-		// blockObject.add(new Block(new
-		// BlockInformation(500,100,300,300,ImageManager.testButtonImage)));
-
+		
+		// CACHE
+		if(GIM.loadedBlockInfo!=null){
+			for(BlockInformation f : GIM.loadedBlockInfo){
+				blockObject.add(new Block(f,1));
+			}
+			GIM.loadedBlockInfo = null;
+		}
+		
+		
 		for (Component b : systemObject) {
 			GIM.GameObject.add(b);
 		}
@@ -434,11 +695,14 @@ public class Scene_CreateGame extends SceneManager {
 		for (Block b : blockObject) {
 			GIM.GameObject.add(b);
 		}
-
+		for (Thread t : backendObject) {
+			t.start();
+		}
 		GIM.GameObject.repaint();
 
 		// introMusic = new Audio("testMusic.mp3", true); 자꾸 에러나서 주석처리 해놓음
 		// introMusic.start();
+		System.out.println("REAL START");
 	}
 
 	@Override
@@ -450,6 +714,9 @@ public class Scene_CreateGame extends SceneManager {
 		for (Block b : blockObject) {
 			GIM.GameObject.remove(b);
 		}
+		for (Thread t : backendObject) {
+			t.interrupt();
+		}
 		// introMusic.close();
 	}
 
@@ -460,5 +727,21 @@ public class Scene_CreateGame extends SceneManager {
 
 		GIM.GameObject.paintComponents(g);
 		GIM.GameObject.repaint();
+	}
+	private static String setGameName() {
+        return JOptionPane.showInputDialog(
+            GIM.GameObject,
+            "Input Game Name",
+            "Welcome to the making!",
+            JOptionPane.QUESTION_MESSAGE);
+    }
+	// UTIL
+	public static boolean isNum(String s) {
+		try {
+			Integer.parseInt(s);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 }
