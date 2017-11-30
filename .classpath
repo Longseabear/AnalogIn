@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="VoiceChat Client &amp; Server/client_voice/src"/>
+	<classpathentry kind="src" path="VoiceChat Client &amp; Server/server_voice/src"/>
+	<classpathentry kind="output" path="VoiceChat Client &amp; Server/client_voice/bin"/>
+</classpath>
