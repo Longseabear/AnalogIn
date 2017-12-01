@@ -590,6 +590,9 @@ public class Scene_CreateGame extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				ruleButton.setVisible(true);
+				RuleFrame rul = new RuleFrame();
+				Map ruleMap = new Map();
+				rul.setVisible(true);
 			}
 		});
 		systemObject.add(ruleButton);
