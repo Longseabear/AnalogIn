@@ -1,6 +1,5 @@
 package AnalogInProject;
 
-import java.io.PipedWriter;
 import java.util.ArrayList;
 
 public class GIM {
@@ -13,6 +12,7 @@ public class GIM {
 	
 	// HOST USER STATUS
 	public static UserInfo me = new UserInfo();
+	public static String currentRoomName = null;
 	
 	// STATUS 게임 외부 변수
 	public static int turnTime = 10;
@@ -20,6 +20,7 @@ public class GIM {
 	
 	// 유동 오브젝트 [ 각종 Manager ]
 	public static KeyInputController keyInputBuffer = null;
+	
 	// GAME 진행시 필요한 변수목록
 	public static SceneManager currentScene = null;
 	public static int blockPriority = 1;
@@ -27,17 +28,25 @@ public class GIM {
 	public static ArrayList<Block> blockObject = null;
 	
 	protected static KeyInputCollector currentInputCollector = null;
-
+	
 	//GAME CREATE시 필요한 변수목록
 	public static blockChangedListener synUISender = null;
 	public static ArrayList<BlockInformation> loadedBlockInfo = null;
+	
+	//GAme Play 시 필요한 변수목록
+	public static RoomInfo playingGameRoom = null;
+	public static String gmaeName = null;
+	public static String rule = null;
+	public static ArrayList<String> imageName = null;
+	public static boolean gameStart = false; 
+	public static String dir = null;
 	
 	public static void setCheckedBlock(Block _b){
 			checkedBlock = _b;
 	}
 	public static void setCheckedBlockCreateRoom(Block _b){
 		checkedBlock = _b;
-		updateData();
+		updateData(); 
 	}
 	public static void updateData(){
 		if(synUISender!=null){

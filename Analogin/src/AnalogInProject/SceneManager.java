@@ -23,8 +23,10 @@ public class SceneManager {
 			return new Scene_Start();
 		case "Lobby":
 			return new Scene_Lobby();
+		case "GameLoading":
+			return new Scene_GameLoading();
 		}
-
+		
 		System.out.println("ERROR " + str);
 		return null;
 	}

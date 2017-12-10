@@ -1,5 +1,10 @@
 package AnalogInProject;
 
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+
 public class blockChangedListener extends Thread{
 		public boolean update = false;
 		public Object lock = new Object();
@@ -48,6 +53,19 @@ public class blockChangedListener extends Thread{
 					scene.sizeYTextField.setText("" + block.blockInfo.height);
 					scene.posXTextField.setText("" + block.blockInfo.x);
 					scene.posYTextField.setText("" + block.blockInfo.y);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							if(!GIM.getCheckdBlock().blockInfo.isStatic)
+								scene.staticButton.setIcon(null);
+							else
+								scene.staticButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+							if(!GIM.getCheckdBlock().blockInfo.isVisible)
+								scene.visibleButton.setIcon(null);
+							else
+								scene.visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+	
+						}
+					});
 					lock.notifyAll();
 				}
 			} while (true);

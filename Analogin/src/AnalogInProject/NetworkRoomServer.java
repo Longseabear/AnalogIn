@@ -43,7 +43,6 @@ public class NetworkRoomServer {
 		}
 		System.out.println("[ReqFun] networkStart -end");
 		return true;
-
 	}
 
 	public static boolean networkClose() {
@@ -65,8 +64,10 @@ public class NetworkRoomServer {
 		}
 		return true;
 	}
-
 	public static boolean joinRoom(String content) {
+		if(GIM.gameStart)
+			return false;
+		
 		// Synchronized
 		System.out.println("[reqFun] joinRoom");
 		String response;
@@ -79,6 +80,9 @@ public class NetworkRoomServer {
 			return false;
 	}
 	public static boolean exitRoom(String content) {
+		if(GIM.gameStart)
+			return false;
+		
 		// Synchronized
 		System.out.println("[reqFun] exitRoom");
 		String response;
@@ -90,7 +94,62 @@ public class NetworkRoomServer {
 		else
 			return false;
 	}
+	//p2p Connection.
+	/*
+	 * STEP 1: user1 - user2 connect STUN server
+	 * STEP 2: user1 -> user2 connection 
+	 * STEP 3: ok.
+	 */
+	public static boolean p2pConnection(String user1, String user2) {
+		
+		// Synchronized
+		System.out.println("[reqFun] p2pConnection");
+		String response;
+		if ((response = (String) Sender("STUN_CONNECT " + user1 + "-" + GIM.me.id , "STUN_CONNECT", true)) == null) {
+			System.out.println(user1 + " fail to connection for STUN");
+			return false;
+		}
+		if (!response.equals("ACK")){
+			System.out.println(user1 + " fail to connection for STUN");			
+			return false;
+		}
+		
+		if ((response = (String) Sender("STUN_CONNECT " + user2 + "-" + GIM.me.id, "STUN_CONNECT", true)) == null) {
+			System.out.println(user2 + " fail to connection for STUN");
+			return false;
+		}
+		if (!response.equals("ACK"))
+		{
+			System.out.println(user2 + " fail to connection for STUN");
+			return false;
+		}
 
+		boolean check = false;
+		try {
+			Thread.sleep(50);
+			int count = 0;
+
+			while(count<=10){
+				if ((response = (String) Sender("STUN_CONNECTION_START " + user1 + "-" + user2, "object", true)) == null) {
+					System.out.println(user1+" and " + user2 + " fail to TCP HOLE PUNCHING");
+				}
+				if (response.equals("ACK"))
+				{
+					System.out.println("try...");
+					check = true;
+					break;
+				}
+				count++;
+				Thread.sleep(50);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("[reqFun] p2pConnection " + check);
+		return check;
+	}
 	// game first entrance
 	public static boolean setGameRegister(String content) {
 		// Synchronized
@@ -125,22 +184,40 @@ public class NetworkRoomServer {
 				System.out.println(u.id);
 			}
 		}
+	}				
+
+	public static boolean SenderNormal(String commend){
+		synchronized(senderLock)
+		{
+			try{
+				out.writeObject(commend);				
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return true;
 	}
 	public static Object Sender(String commend, String jobType, boolean isSyn) {
 		Handler h = new Handler(jobType);
 		synchronized (handlers) {
-			handlers.add(h);
+			if(isSyn)
+				handlers.add(h);
 		}
 		String handlerName;
 		if (jobType.equals("object"))
 			handlerName = h.getName();
 		else
+		{
 			handlerName = jobType;
+			h.setName(jobType);
+		}
 		h.start();
 		String req = "USER " + h.getName() + " " + commend;
 		System.out.println("[Sender] request : " + req);
 		synchronized (senderLock) {
 			try {
+				out.reset();
 				out.writeObject(req);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -154,24 +231,28 @@ public class NetworkRoomServer {
 		}
 		if (isSyn) {
 			try {
-				h.join(3000);
+				h.join(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			h.interrupt();
+			Object res = null;
+			synchronized (networkJar) {
+				res = networkJar.get(handlerName);
+				networkJar.remove(handlerName);
+			}
+			synchronized (handlers) {
+				h.interrupt();
+				handlers.remove(h);
+			}
+			return res;
 		}
-		Object res = null;
-		synchronized (networkJar) {
-			res = networkJar.get(handlerName);
-			networkJar.remove(handlerName);
-		}
-		synchronized (handlers) {
-			h.interrupt();
-			handlers.remove(h);
-		}
-		return res;
+		return null;
 	}
+	// jobType
+	//
+	//
 	public static Handler systemHandler(String jobType){
 		Handler h = new Handler(jobType);
 		synchronized (handlers) {
@@ -185,6 +266,11 @@ public class NetworkRoomServer {
 	 * @author LEaps Response Pattern -> Thread-Name Content
 	 */
 
+	public static void removeHandler(){
+		for( Handler h : handlers){
+			h.interrupt();
+		}
+	}
 	private static class Receiver extends Thread {
 		static ObjectInputStream in;
 
@@ -204,6 +290,26 @@ public class NetworkRoomServer {
 		public void stringResponse(String reqFromServer) {
 			System.out.println("[Receiver] : " + reqFromServer);
 			String[] res = reqFromServer.split(" ", 2);
+			if(res[0].startsWith("GAME_START"))
+			{
+				GIM.gameStart = true;
+				GIM.playingGameRoom = new RoomInfo(Scene_Lobby.roomInfoList.get(GIM.currentRoomName));
+
+				new Thread(new Runnable(){
+					@Override
+					public void run(){
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Scene_Lobby.currentRoom.roomLobbyCloseNotExitRoom();
+						GIM.GameObject.changeScene(GIM.currentScene, "GameLoading");
+					}
+				}).start();
+				return;
+			}
 			synchronized (networkJar) {
 				networkJar.put(res[0], res[1]);
 				networkJar.notifyAll();
@@ -236,7 +342,7 @@ public class NetworkRoomServer {
 					}
 				} catch (IOException | ClassNotFoundException e) {
 					// TODO Auto-generated catch block
-					// e.printStackTrace();
+					 e.printStackTrace();
 					System.out.println("[Receiver] Socket IO Exception");
 					try {
 						socket.close();

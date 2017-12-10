@@ -50,6 +50,7 @@ public class SaveLoadManager {
 			oos.writeObject(blockInfo);
 			oos.reset();
 			oos.writeObject(imageName);
+			oos.close();
 			return true;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

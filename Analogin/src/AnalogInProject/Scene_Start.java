@@ -93,6 +93,9 @@ public class Scene_Start extends SceneManager {
 			public void mousePressed(MouseEvent e) {
 				if(!Scene_Start.gameJoin(idTextField.getText()))
 					return;
+				GIM.me = new UserInfo();
+				GIM.me.id = idTextField.getText();
+				
 				GIM.GameObject.changeScene(thisInstance, "Lobby");
 			}
 		});

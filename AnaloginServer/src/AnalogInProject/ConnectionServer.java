@@ -1,4 +1,5 @@
 package AnalogInProject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,24 +11,22 @@ import java.net.SocketException;
 import java.util.HashMap;
 
 /**
- * @author LEaps
- *  This server manage to communication for each other peer.
- *	for this, we use 'TCP hole punching'			
- *  through this server, user ...
- *  name -> primary key
- *  
- *  
- *  [HOST] [COMMAND] [CONTENT]
- *  
- *  HOST : USER OR SERVER
- *  
+ * @author LEaps This server manage to communication for each other peer. for
+ *         this, we use 'TCP hole punching' through this server, user ... name
+ *         -> primary key
+ * 
+ * 
+ *         [HOST] [HANDLER_NAME] [COMMAND] [CONTENT]
+ * 
+ *         HOST : USER OR SERVER
+ * 
  */
 
 public class ConnectionServer {
 
-	static final int serverPORT = 9876;
-	
-	public static void main(String[] args) throws Exception {
+	static final int serverPORT = 1111;
+
+	public  ConnectionServer() throws Exception {
 		System.out.println("The analogin holepunching server is running.");
 		ServerSocket listener = new ServerSocket(serverPORT);
 		listener.setReuseAddress(true);
@@ -39,19 +38,21 @@ public class ConnectionServer {
 			listener.close();
 		}
 	}
-	public static HashMap<String,HolePunchingServer> userList = new HashMap<String,HolePunchingServer>(); 
-	
-	public static class HolePunchingServer extends Thread{
-		Socket socket; 
+
+	public static HashMap<String, HolePunchingServer> userList = new HashMap<String, HolePunchingServer>();
+
+	public static class HolePunchingServer extends Thread {
+		Socket socket;
 		String userName;
 		private BufferedReader in;
 		private PrintWriter out;
+
 		InetAddress userPrivateIp = null;
 		InetAddress userPublicIp = null;
 		int userPrivatePort;
 		int userPublicPort;
-		
-		public HolePunchingServer(Socket _socket){
+
+		public HolePunchingServer(Socket _socket) {
 			socket = _socket;
 			try {
 				socket.setReuseAddress(true);
@@ -60,90 +61,73 @@ public class ConnectionServer {
 				e.printStackTrace();
 			}
 		}
+
+		public String userConnectionInfo() {
+			return "setConnectionInfo" + "-" + userPrivateIp + "-" + userPrivatePort + "-" + userPublicIp + "-"
+					+ userPublicPort;
+		}
+
 		@Override
-		public void run(){
-			try{
+		public void run() {
+			try {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				out = new PrintWriter(socket.getOutputStream(), true);	
-				do{
-					String[] req = in.readLine().split("-");
-					String host = req[0];
-					String command = req[1];
-					String content = null;
-					if(req.length>2){
-						content = req[2];
-					}
-			
-					/**
-					 * USER-CONNECTION_SERVER-PROTOCOL
-					 **/
-					if(host.equals("USER"))
-					{
+				out = new PrintWriter(socket.getOutputStream(), true);
+				// 처음으로 이름-privateIp-port;
+				String[] firstReq = in.readLine().split("-");
+				userName = firstReq[0];
+				System.out.println("[STUN] Access " + userName);
+				if(!userName.equals("[SERVER]"))
+				{
+					userPrivateIp = InetAddress.getByName(firstReq[1]);
+					userPrivatePort = Integer.parseInt(firstReq[2]);
+					userPublicIp = socket.getInetAddress();
+					userPublicPort = socket.getPort();					
+				}
+
+				System.out.println("[STUN] " + userName + " in list");
+				userList.put(userName, this);
+
+				if (userName.equals("[SERVER]")) {
+					do {
+						String[] req = in.readLine().split(" ");
+						String command = req[0];
+						String content = req[1];
+
 						/**
-						 * JOIN USERNAME
-						 * Content : NULL 
-						 * response : NULL.
-						 * register user_name to HolePunchingServer.
-						 **/
-						if(command.equals("JOIN"))
-						{
-							userName = content;
-							userList.put(userName, this);
-						}
-						/**
-						 * SET_MYIP privateIp privatePort
-						 * Content : 
-						 * response : NULL.
-						 * register user_name to HolePunchingServer.
-						 **/
-						if(command.equals("SET_MYIP"))
-						{
-							String userInfo[] = content.split(" ");
-							userPrivateIp = InetAddress.getByName(userInfo[0]);
-							userPrivatePort = Integer.parseInt(userInfo[1]);
-							userPublicIp = socket.getInetAddress();
-							userPublicPort = socket.getPort();
-						}	
-					}
-					/**
-					 * SERVER-CONNECTION_SERVER-PROTOCOL
-					 **/
-					else if(host.equals("SERVER")){
-						/**
-						 * CONNECTION USERNAME USERNAME
-						 * Content : USER USER
+						 * CONNECTION USERNAME USERNAME Content : USER USER
 						 * response : ACK / NAK. [ INPUT_EEROR / NOT_FIND_USER ]
-						 * connect two user. 
+						 * connect two user.
 						 **/
-						if(command.equals("CONNECTION"))
-						{
-							String[] user = content.split(" ");
-							if(user.length!=2){
-								out.println("NAK_INPUT_ERROR");
+						if (command.startsWith("SET")) {
+							String[] user = content.split("-");
+							System.out.println("[STUN] " + userName + " SET User : " + user[0] + " "+ user[1]);
+							if (!userList.containsKey(user[0]) || !userList.containsKey(user[1])){
+								System.out.println("[STUN] " + userName + "SET FAILE : because userName Not in list");
+								out.println("NAK");
 								continue;
 							}
-							if(!userList.containsKey(user[0]+"_"+user[1]) || !userList.containsKey(user[1]+"_"+user[0])){
-								out.println("NAK_NOT_FIND_USER");
-								continue;
-							}
-							HolePunchingServer receiver = userList.get(user[0]+"_"+user[1]);
-							HolePunchingServer connector = userList.get(user[1]+"_"+user[0]);
-							connector.out.println("접속해야되는 정보");
-							receiver.out.println("방만들어라");
-							connector.out.println("참가해라");
-						} 
-					}
-				}while(true);
-			}catch(Exception e){
+							HolePunchingServer receiver = userList.get(user[0]);
+							HolePunchingServer connector = userList.get(user[1]);
+							connector.out.println(receiver.userConnectionInfo());
+							System.out.println("[STUN] Ip setup Ok");
+							receiver.out.println("RECEIVE");
+							connector.out.println("CONNECT");
+							userList.remove(user[0]);
+							userList.remove(user[1]);
+							out.println("ACK");
+						}
+					} while (true);
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
-			}finally{
 				try {
 					socket.close();
-				} catch (IOException e) {
+					System.out.println("[STUN] exit " + userName);
+				} catch (IOException e2) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e2.printStackTrace();
 				}
-			}
+			} 
 		}
 	}
 }

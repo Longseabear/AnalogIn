@@ -57,8 +57,8 @@ public class Scene_CreateGame extends SceneManager {
 	public JTextField posYTextField = new JTextField();
 	public JTextField sizeXTextField = new JTextField();
 	public JTextField sizeYTextField = new JTextField();
-	private JButton staticButton = new JButton();
-	private JButton visibleButton = new JButton();
+	public JButton staticButton = new JButton();
+	public JButton visibleButton = new JButton();
 	private JButton behindButton = new JButton();
 	private JButton frontButton = new JButton();
 	private JButton topButton = new JButton();
@@ -84,8 +84,8 @@ public class Scene_CreateGame extends SceneManager {
 		//
 		GIM.currentScene = this;
 		// Input 등록
-		GIM.keyInputBuffer = new KeyInputController();
-		GIM.keyInputBuffer.start();
+//		GIM.keyInputBuffer = new KeyInputController();
+//		GIM.keyInputBuffer.start();
 		GIM.blockObject = blockObject;
 
 		// Block의 우선순위
@@ -323,7 +323,20 @@ public class Scene_CreateGame extends SceneManager {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				staticButton.setVisible(true);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if(GIM.getCheckdBlock()!=null && GIM.getCheckdBlock().blockInfo.isStatic)
+						{
+							staticButton.setIcon(null);
+							GIM.getCheckdBlock().blockInfo.isStatic = false;
+						}
+						else
+						{
+							staticButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+							GIM.getCheckdBlock().blockInfo.isStatic = true;							
+						}
+					}
+				});
 			}
 		});
 
@@ -351,15 +364,17 @@ public class Scene_CreateGame extends SceneManager {
 			public void mousePressed(MouseEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if(visibleButton.getIcon()!=null)
+						if(GIM.getCheckdBlock()!=null && GIM.getCheckdBlock().blockInfo.isVisible)
 						{
 							visibleButton.setIcon(null);
 							GIM.getCheckdBlock().blockInfo.isVisible = false;
+							GIM.getCheckdBlock().setVisible(false);
 						}
 						else
 						{
 							visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
 							GIM.getCheckdBlock().blockInfo.isVisible = true;							
+							GIM.getCheckdBlock().setVisible(true);
 						}
 					}
 				});
@@ -615,11 +630,16 @@ public class Scene_CreateGame extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				//save
-				String saveforder = SaveLoadManager.getSaveDirectory();
 				String gameName = Scene_CreateGame.setGameName();
+				String saveforder = SaveLoadManager.getSaveDirectory();
 						
-				if(saveforder!=null && gameName.equals(""))
-					SaveLoadManager.saveMap(blockObject, saveforder, "Chess rule", gameName);
+				if(saveforder!=null && !gameName.equals(""))
+				{
+					if(SaveLoadManager.saveMap(blockObject, saveforder, "Chess rule", gameName))
+						System.out.println("Save Success");
+					else
+						System.out.println("Save Fail");
+				}
 			}
 		});
 		systemObject.add(saveButton);

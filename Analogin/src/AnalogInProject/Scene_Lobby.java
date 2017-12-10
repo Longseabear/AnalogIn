@@ -71,8 +71,9 @@ public class Scene_Lobby extends SceneManager {
 	public static void synRoomInfoWithServer() {
 		System.out.println("[synRoomInfoWithServer] Syn Start");
 		synchronized (roomInfoList) {
-			roomInfoList = NetworkRoomServer.getRoomInfo();
-			if (roomInfoList != null) {
+			HashMap<String, RoomInfo> temp = NetworkRoomServer.getRoomInfo();
+			if (temp != null) {
+				roomInfoList = NetworkRoomServer.getRoomInfo();
 				roomRef();
 			}
 		}
@@ -93,6 +94,7 @@ public class Scene_Lobby extends SceneManager {
 			t.start();
 		}
 		systemHandler.add(NetworkRoomServer.systemHandler("LOBBY_STATE_CHANGE"));
+		//systemHandler.add(NetworkRoomServer.systemHandler("STUN_SERVER_STEP1"));
 	}
 
 	public Scene_Lobby() {
@@ -125,8 +127,10 @@ public class Scene_Lobby extends SceneManager {
 					if(!NetworkRoomServer.joinRoom(room.roomName)){
 						return;
 					}
+
 					synRoomInfoWithServer();
 					currentRoom = new RoomLobby(room.roomName);
+					GIM.currentRoomName = room.roomName;
 				}
 			}
 		});
@@ -180,6 +184,7 @@ public class Scene_Lobby extends SceneManager {
 
 	@Override
 	public void removeScene() {
+		NetworkRoomServer.removeHandler();
 		GIM.removeGIM();
 		for (Component c : systemObject) {
 			GIM.GameObject.remove(c);
@@ -191,6 +196,7 @@ public class Scene_Lobby extends SceneManager {
 			t.interrupt();
 		}
 		for (Handler t : systemHandler) {
+			System.out.println("REmove : " + t.getName());
 			t.interrupt();
 		}
 		// introMusic.close();

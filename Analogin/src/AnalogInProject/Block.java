@@ -97,10 +97,13 @@ public class Block extends JLabel {
 				// System.out.println(blockObject.indexOf(gameObject));
 				mouseX = e.getX();
 				mouseY = e.getY();
-				GameObject.remove(gameObject);
-				GameObject.add(gameObject, 0);
-				GIM.blockObject.remove(gameObject);
-				GIM.blockObject.add(gameObject);
+				if(!blockInfo.isStatic)
+				{
+					GameObject.remove(gameObject);
+					GameObject.add(gameObject, 0);
+					GIM.blockObject.remove(gameObject);
+					GIM.blockObject.add(gameObject);					
+				}
 			}
 
 			@Override

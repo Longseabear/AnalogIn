@@ -9,36 +9,41 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class RoomLobby extends JFrame {
 	public JPanel userPanel;
 	public JPanel buttonPanel;
 	public String roomName;
-
 	public void roomLobbyClose() {
 		NetworkRoomServer.exitRoom(roomName);
 		this.dispose();
 	}
-
+	public void roomLobbyCloseNotExitRoom() {
+//		NetworkRoomServer.exitRoom(roomName);
+		this.dispose();
+	}
 	public boolean refresh() {
-
 		userPanel.removeAll();
-		synchronized (Scene_Lobby.roomInfoList) {
-			for (UserInfo user : Scene_Lobby.roomInfoList.get(roomName).User) {
-				userPanel.add(new JButton(user.id));
+		if(Scene_Lobby.roomInfoList!=null)
+		{
+			synchronized (Scene_Lobby.roomInfoList) {
+				for (UserInfo user : Scene_Lobby.roomInfoList.get(roomName).User) {
+					userPanel.add(new JButton(user.id));
+				}
 			}
+			while (userPanel.getComponentCount() < 4) {
+				userPanel.add(new JButton());
+			}
+			userPanel.revalidate();
+			userPanel.repaint();
+			return true;			
 		}
-		while (userPanel.getComponentCount() < 4) {
-			userPanel.add(new JButton());
-		}
-		userPanel.revalidate();
-		userPanel.repaint();
-		return true;
+		return false;
 	}
 
 	public RoomLobby(String _roomName) {
@@ -68,7 +73,15 @@ public class RoomLobby extends JFrame {
 		startBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				roomLobbyClose();
+				GIM.playingGameRoom = new RoomInfo(Scene_Lobby.roomInfoList.get(GIM.currentRoomName));
+				ArrayList<UserInfo> users = GIM.playingGameRoom.User;
+				String master = users.get(0).id;
+				if(master.equals(GIM.me.id)){
+					for(int i=1;i!=users.size();i++){
+						NetworkRoomServer.SenderNormal("USER NONE GAME_START " + users.get(i).id);
+					}
+					NetworkRoomServer.SenderNormal("USER NONE GAME_START " + master);
+				}
 			}
 		});
 		JButton exitBtn = new JButton("EXIT");
