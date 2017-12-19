@@ -28,11 +28,11 @@ public class AnaloginServer {
 	public static Socket StunSocket = null;
 	public static BufferedReader StunIn = null;
 	public static PrintWriter StunOut = null;
-	
-	public AnaloginServer()throws Exception {
+
+	public AnaloginServer() throws Exception {
 		System.out.println("The analogin server is running.");
-		
-		StunSocket = new Socket(STUN_SERVER_IP,STUN_SERVER_PORT);
+
+		StunSocket = new Socket(STUN_SERVER_IP, STUN_SERVER_PORT);
 		StunIn = new BufferedReader(new InputStreamReader(StunSocket.getInputStream()));
 		StunOut = new PrintWriter(StunSocket.getOutputStream(), true);
 
@@ -58,7 +58,6 @@ public class AnaloginServer {
 		a.gameName = "HELLO WORL";
 		a.roomName = "BUE BUE";
 		RoomManager.roomInfoList.put(a.roomName, a);
-
 	}
 
 	private static class RoomServerHandler extends Thread {
@@ -168,23 +167,46 @@ public class AnaloginServer {
 				}
 				/**
 				 * USER REQURST PROTOCOL 3 Command : CREATE_ROOM Content :
-				 * [RoomName] [GameName] [UserName] response : ACK / ERR /
+				 * [RoomName] [GameName] [UserName] [RULE] response : ACK / ERR /
 				 * DUP(duplication) [ Create Room ]. Create Room.
 				 **/
-				/*
-				 * else if (command.equals("CREATE_ROOM")) { String req[] =
-				 * content.split(" "); String roomName = req[0]; String gameName
-				 * = req[1]; String userName = req[2]; // duplication Check if
-				 * (RoomManager.isRoomName(roomName)) { // REACK DUP
-				 * out.println("DUP"); continue; } RoomInfo room = new
-				 * RoomInfo(); room.roomName = roomName; room.gameName =
-				 * gameName; if (roomNumberPool.peek() != null) room.roomNumber
-				 * = roomNumberPool.poll(); else { // CREATE ERROR
-				 * out.println("ERR"); continue; }
-				 * room.User.add(userInfoList.get(userName).userInfo);
-				 * RoomManager.roomInfoList.put(roomName, room);
-				 * out.println("ACK"); }
-				 */
+				else if (command.equals("CREATE_ROOM")) {
+					String[] requestContent = content.split("-",5);
+					String roomName = requestContent[0];
+					String gameName = requestContent[1];
+					String userName = requestContent[2];
+					String rule = requestContent[3];
+					// duplication Check if
+					if (RoomManager.isRoomName(roomName)) { // REACK DUP
+						synchronized (RoomManager.roomInfoList) {
+							out.reset();
+							System.out.println("이미 방이 있음");
+							out.writeObject(handlerName+" FAIL");
+						}							
+						return;
+					}
+					System.out.println("[SERVER] CREATE_ROOM -> Create room");
+					RoomInfo room = new RoomInfo();
+					room.roomName = roomName;
+					room.gameName = gameName;
+					RoomManager.roomInfoList.put(room.roomName, room);
+					if (roomNumberPool.peek() != null)
+						room.roomNumber = roomNumberPool.poll();
+					else { // CREATE ERROR
+						System.out.println("[SERVER] ERRO -> PEEK FAIL");
+						out.writeObject(handlerName+" FAIL");
+					}
+					System.out.println("UserName = " + userName);
+					room.User.add(userInfoList.get(userName).userInfo);
+
+					synchronized (RoomManager.roomInfoList) {
+						RoomManager.roomInfoList.put(roomName, room);
+					}
+					System.out.println("[SERVER] LobbyStateChange");
+					userLobbyStateChange(userInfo.id);		
+					System.out.println("[SERVER] CREATE_ROOM -> OK SEND ACK");
+					out.writeObject(handlerName+" ACK");
+				}
 
 				/**
 				 * USER REQURST PROTOCOL 4 Command : JOIN_ROOM Content :
@@ -236,41 +258,34 @@ public class AnaloginServer {
 					userLobbyStateChange(userInfo.id);
 				}
 				/**
-				 * USER REQURST PROTOCOL 6 Command : STUN_CONNECT 
-				 * Content : user1 [STUN_CONNECT] 
-				 * response : ACK / NAK [
-				 * Connection ] for Hole Punching, connect with STUN server.
-				 * this time, user send privateIP/privatePort to STUN server
+				 * USER REQURST PROTOCOL 6 Command : STUN_CONNECT Content :
+				 * user1 [STUN_CONNECT] response : ACK / NAK [ Connection ] for
+				 * Hole Punching, connect with STUN server. this time, user send
+				 * privateIP/privatePort to STUN server
 				 **/
 				else if (command.equals("STUN_CONNECT")) {
 					String[] userNhost = content.split("-");
-					uniCast(userNhost[0],"STUN_STEP1 "+userNhost[1]);
+					uniCast(userNhost[0], "STUN_STEP1 " + userNhost[1]);
 				}
 				/**
-				 * USER REQURST PROTOCOL 7 Command : STUN_CONNECT_OK 
-				 * Content : user1 [STUN_CONNECT] 
-				 * response : ACK
-				 * Connection OK
+				 * USER REQURST PROTOCOL 7 Command : STUN_CONNECT_OK Content :
+				 * user1 [STUN_CONNECT] response : ACK Connection OK
 				 */
 				else if (command.equals("STUN_CONNECT_OK")) {
-					uniCast(content, handlerName +" ACK");
-				}
-				else if (command.equals("STUN_CONNECT_FALSE")) {
-					uniCast(content, handlerName +" NAC");
-				}
-				else if(command.equals("STUN_CONNECTION_START")){
+					uniCast(content, handlerName + " ACK");
+				} else if (command.equals("STUN_CONNECT_FALSE")) {
+					uniCast(content, handlerName + " NAC");
+				} else if (command.equals("STUN_CONNECTION_START")) {
 					String[] users = content.split("-");
-					StunOut.println("SET " + users[0] +"-" + users[1]);
-					if(StunIn.readLine().equals("ACK")){
+					StunOut.println("SET " + users[0] + "-" + users[1]);
+					if (StunIn.readLine().equals("ACK")) {
 						System.out.println("[STUN] HOLPUNCHING ACK");
 						out.writeObject(handlerName + " ACK");
-					}else
-					{
+					} else {
 						System.out.println("[STUN] HOLPUNCHING NAK");
 						out.writeObject(handlerName + " NAK");
 					}
-				}
-				else if (command.equals("GAME_START")) {
+				} else if (command.equals("GAME_START")) {
 					uniCast(content, "GAME_START");
 				}
 				System.out.println("PROCESS OK");
@@ -295,6 +310,7 @@ public class AnaloginServer {
 					}
 				} while (true);
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println(userInfo.id + " is exit.");
 			} finally {
 				// User 나감
