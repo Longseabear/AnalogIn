@@ -69,6 +69,8 @@ public class NetworkPeerManager extends Thread{
 					System.out.println("[RECEIVER] WAIT START");
 					socket.close();
 					ServerSocket rev = new ServerSocket(mePort);
+					System.out.println(" Port : " + mePort);
+
 					Socket client = rev.accept();
 					rev.close();
 					synchronized(peers)
@@ -84,9 +86,11 @@ public class NetworkPeerManager extends Thread{
 					System.out.println("[CONNECTER] START");
 					socket.close();
 					SocketAddress socketAddress = new InetSocketAddress(tempPrivateIp, tempPrivatePort);
+					System.out.println(tempPrivateIp + " " + tempPrivatePort + " access...");
 					try{
 						socket = new Socket();
 						socket.connect(socketAddress, 500);
+						System.out.println("GO");
 						synchronized(peers)
 						{
 							peers.add(new NetworkPeer(socket));
@@ -98,6 +102,7 @@ public class NetworkPeerManager extends Thread{
 						System.out.println("ACCESS PUBLIC IP");
 					}
 					socketAddress = new InetSocketAddress(tempPublicIp, tempPublicPort);
+					System.out.println(tempPublicIp + " " + tempPublicPort + " access...");
 					try{
 						socket = new Socket();
 						socket.connect(socketAddress, 10000);
