@@ -86,6 +86,10 @@ public class Scene_GameLoading extends SceneManager {
 				System.out.println("[SCENE_GAMELOADING] ERROR ImageRequest");
 				System.exit(1);				
 			}
+//			System.out.println("버그테스트");
+//			for(BlockInformation b : GIM.loadedBlockInfo){
+//				System.out.println(b.imagePath + " " + b.height);
+//			}
 			System.out.println("requyest는?");
 		}else{
 			System.out.println("MASTER");
@@ -130,7 +134,7 @@ public class Scene_GameLoading extends SceneManager {
 			System.out.println("peersSize = " + NetworkPeerManager.peers.size());
 			for(int i=0;i<NetworkPeerManager.peers.size();i++)
 			{
-				System.out.println("[GAME_LOADING]"+ i + " connection start");
+				System.out.println("[GAME_LOADING] "+ i + " connection start");
 
 				NetworkPeer p = NetworkPeerManager.peers.get(i);
 				while(true){
@@ -149,7 +153,7 @@ public class Scene_GameLoading extends SceneManager {
 						p.networkJar.remove("FILE_REQUEST_BUFFEREDIMAGE");
 						System.out.println("REs : " + res);
 					}
-					if(!res.equals("ACK")){
+					if(!res.equals("COMPLETE")){
 						try {
 					        FileInputStream fis = new FileInputStream(new File(GIM.dir + res));
 					        byte[] buffer = new byte[fis.available()];
@@ -168,6 +172,7 @@ public class Scene_GameLoading extends SceneManager {
 			// 끝 이제 게임을 시작하면 됨. 나머지 3명에게 게임스타트를 보내주고, 3초로 맞춘다음 스타트.
 		}
 		System.out.println("[ok setting completion");
+		GIM.GameObject.changeScene(thisInstance, "GamePlaying");		
 		//Connection OK
 		GIM.GameObject.repaint();
 	}

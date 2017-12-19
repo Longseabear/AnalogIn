@@ -31,9 +31,10 @@ public class Block extends JLabel {
 
 	public Block(BlockInformation b) {
 		blockInfo = b;
+		if(blockInfo.image==null){
+			blockInfo.setImagePath(blockInfo.imagePath);
+		}
 		synBlockInfo();
-		
-		op = 0;
 		// initialize
 		this.addMouseListener(new MouseAdapter() {
 			@Override
@@ -82,6 +83,7 @@ public class Block extends JLabel {
 				}
 			}
 		});
+
 	}
 	public Block(BlockInformation b , int _op) {
 		blockInfo = b;

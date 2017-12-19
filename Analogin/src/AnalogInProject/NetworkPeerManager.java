@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class NetworkPeerManager extends Thread{
 	public static ArrayList<NetworkPeer> peers = new ArrayList<NetworkPeer>();
-	private static String STUN_SERVER_IP = "127.0.0.1";
+	private static String STUN_SERVER_IP = "210.90.135.149";
 	private static int STUN_SERVER_PORT = 1111;
     static BufferedReader in;
     static PrintWriter out;

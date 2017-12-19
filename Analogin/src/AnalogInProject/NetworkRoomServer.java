@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class NetworkRoomServer {
 	private static final int PORT = 2346;
-	static final String serverAddress = "127.0.0.1";
+	static final String serverAddress = "210.90.135.149";
 	static ObjectInputStream ois;
 
 	private static Socket socket = null;

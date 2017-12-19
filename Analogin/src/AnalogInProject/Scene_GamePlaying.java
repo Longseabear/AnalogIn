@@ -303,10 +303,12 @@ public class Scene_GamePlaying extends SceneManager {
 		systemObject.add(exitButton);
 		
 		// CACHE
+		System.out.println("loadedBlockInfo load start");
 		if(GIM.loadedBlockInfo!=null){
 			for(BlockInformation f : GIM.loadedBlockInfo){
 				blockObject.add(new Block(f));
 			}
+			System.out.println("Success okokok");
 			GIM.loadedBlockInfo = null;
 		}
 		

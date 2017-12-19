@@ -81,7 +81,7 @@ public class NetworkPeer {
 				return false;
 			}
 		}
-		SenderNormal("FILE_REQUEST_BI COMPLETE");
+		SenderNormal("FILE_REQUEST_BUFFEREDIMAGE COMPLETE");
 		return true;
 	}
 
@@ -154,7 +154,12 @@ public class NetworkPeer {
 			GIM.loadedBlockInfo = (ArrayList<BlockInformation>) networkJar.get("PEER_BLOCK_INFO");
 			GIM.imageName = (ArrayList<String>) networkJar.get("PEER_IMAGE_NAME");
 		}
+		
 		GIM.dir = GIM.gmaeName + "\\\\";
+		
+		for(int i=0;i!=GIM.loadedBlockInfo.size();i++){
+			GIM.loadedBlockInfo.get(i).imagePath = GIM.dir+GIM.imageName.get(i);
+		}
 		// 있는지 체크, 없다면?
 		File dir = new File(GIM.dir);
 		dir.mkdir();
