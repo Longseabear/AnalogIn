@@ -1,7 +1,7 @@
 package AnalogInProject;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * 
@@ -48,8 +50,8 @@ public class NetworkPeer {
 		receiver.start();
 	}
 
-	public Handler systemHandler(String jobType){
-		Handler h = new Handler(jobType,networkJar);
+	public Handler systemHandler(String jobType) {
+		Handler h = new Handler(jobType, networkJar);
 		synchronized (this.handlers) {
 			this.handlers.add(h);
 		}
@@ -57,40 +59,50 @@ public class NetworkPeer {
 		System.out.println("[SystemHandler] request : " + jobType);
 		return h;
 	}
+
 	public boolean imageRequest() {
 		for (String imgName : GIM.imageName) {
 			File f = new File(GIM.dir + imgName);
+			System.out.println("SAve DIR : " + f.getAbsolutePath());
 			if (f.isFile())
 				continue;
-			BufferedImage response;
-			if ((response = (BufferedImage) Sender("FILE_REQUEST_BI " + imgName, "FILE_REQUEST_BUFFEREDIMAGE", true)) == null) {
+			byte[] response;
+			if ((response = (byte[]) Sender(imgName, "FILE_REQUEST_BUFFEREDIMAGE", true)) == null) {
+				System.out.println("[IMAGEREQUEST] RESPONSE NULL");
 				return false;
 			}
 			try {
-				ImageIO.write(response, imgName.split(".")[1], f);
+
+				FileOutputStream fos = new FileOutputStream(f);
+				fos.write(response);
+				System.out.println("imgName = " + f);
 			} catch (Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 		}
 		SenderNormal("FILE_REQUEST_BI COMPLETE");
 		return true;
 	}
-	public  boolean SenderNormal(String commend){
-		synchronized(senderLock)
-		{
-			try{
-				out.writeObject(commend);				
-			}catch(Exception e){
+
+	public boolean SenderNormal(String commend) {
+		synchronized (senderLock) {
+			try {
+				out.writeObject(commend);
+			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
 			}
 		}
 		return true;
 	}
+
 	public boolean mapInfoSend() {
 		synchronized (senderLock) {
 			try {
+				System.out.println("[GAME_LOADING] INFO SENDING...");
 				out.reset();
+				System.out.println("[SENDING...] gamename : " + GIM.gmaeName);
 				out.writeObject("PEER_GAME_NAME " + GIM.gmaeName);
 				out.reset();
 				out.writeObject("PEER_RULE " + GIM.rule);
@@ -100,6 +112,7 @@ public class NetworkPeer {
 				GIM.imageName.add(0, "PEER_IMAGE_NAME");
 				out.writeObject(GIM.imageName);
 				GIM.imageName.remove(0);
+				System.out.println("[GAME_LOADING] INFO SENDING OK!");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,7 +155,7 @@ public class NetworkPeer {
 			GIM.imageName = (ArrayList<String>) networkJar.get("PEER_IMAGE_NAME");
 		}
 		GIM.dir = GIM.gmaeName + "\\\\";
-		//있는지 체크, 없다면?
+		// 있는지 체크, 없다면?
 		File dir = new File(GIM.dir);
 		dir.mkdir();
 		try {
@@ -279,14 +292,16 @@ public class NetworkPeer {
 			}
 			System.out.println("[PeerReceiver] put ArrayList BLOCKINFO in networkJar of PEER_BLOCK_INFO");
 		}
+
 		public void bufferedImageResponse(Object reqFromServer) {
-			System.out.println("[PeerReceiver] : bufferedImage Receive");
+			System.out.println("[PeerReceiver] : Image Receive");
 			synchronized (networkJar) {
 				networkJar.put("FILE_REQUEST_BUFFEREDIMAGE", reqFromServer);
 				networkJar.notifyAll();
 			}
 			System.out.println("[PeerReceiver] put [SOME_FILE] in networkJar of FILE_REQUEST_BUFFEREDIMAGE");
 		}
+
 		public void byteResponse(Object reqFromServer) {
 			System.out.println("[PeerReceiver] : Byte Receive");
 			synchronized (networkJar) {
@@ -306,7 +321,7 @@ public class NetworkPeer {
 						stringResponse((String) reqFromServer);
 					} else if (reqFromServer instanceof HashMap) {
 						hashResponse(reqFromServer);
-					} else if (reqFromServer instanceof HashMap) {
+					} else if (reqFromServer instanceof byte[]) {
 						bufferedImageResponse(reqFromServer);
 					} else if (reqFromServer instanceof ArrayList<?>) {
 						if (((ArrayList<?>) reqFromServer).get(0) instanceof BlockInformation) {
@@ -337,11 +352,10 @@ public class NetworkPeer {
 	}
 
 	public void SenderObject(Object obj) {
-		synchronized(senderLock)
-		{
-			try{
-				out.writeObject(obj);				
-			}catch(Exception e){
+		synchronized (senderLock) {
+			try {
+				out.writeObject(obj);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

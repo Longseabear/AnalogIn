@@ -25,6 +25,9 @@ public class SceneManager {
 			return new Scene_Lobby();
 		case "GameLoading":
 			return new Scene_GameLoading();
+
+		case "GamePlaying":
+			return new Scene_GamePlaying();
 		}
 		
 		System.out.println("ERROR " + str);

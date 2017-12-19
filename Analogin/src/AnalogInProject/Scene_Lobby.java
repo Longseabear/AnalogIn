@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -25,7 +26,8 @@ public class Scene_Lobby extends SceneManager {
 	// Music
 	// private Audio introMusic;
 	private JButton backButton = new JButton();
-
+	private JButton createButton = new JButton();
+	
 	// Image
 	private Image background = ImageManager.Lobby;
 
@@ -142,6 +144,74 @@ public class Scene_Lobby extends SceneManager {
 		systemObject.add(j);
 
 		// Back Button
+		createButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
+		createButton.setContentAreaFilled(false); // 채우지마
+		createButton.setBounds(970, 600, 82, 47);
+	//	createButton.setFocusPainted(false);
+		createButton.setText("CREATE");
+		createButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				createButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// button.setIcon으로 아이콘변경
+				createButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ArrayList<BlockInformation> blockInfo = null;
+				String loadpath = SaveLoadManager.getLoadDirectory();
+				if(loadpath!=null)
+					blockInfo = SaveLoadManager.loadMap(loadpath);
+				else{
+					System.out.println("LoadPathFail");
+				}
+				GIM.loadedBlockInfo = blockInfo;
+				GIM.currentRoomName = "CHESS GAME!!" + (int)(Math.random()*100);
+				
+				//GAME 이름 알고, RULE 아니까 그냥 생성하면 끝 gameName] [UserName] [RULE]
+				String res;
+				if((res = (String)NetworkRoomServer.Sender("CREATE_ROOM " + GIM.currentRoomName + "-" + 
+				GIM.gmaeName + "-" +
+				GIM.me.id + "-" +
+				GIM.rule + "-", "object", true))==null){
+					System.out.println("방만들기 실패");
+					return;
+				};
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				// JOIN GAME ROOM
+				if (currentRoom != null) {
+					currentRoom.roomLobbyClose();
+					currentRoom = null;
+				}
+				//SENDER에게 요청// 서버에서 ROOM을 전해준다.
+				RoomInfo room;					
+				synchronized(roomInfoList){
+					if(roomInfoList.containsKey(GIM.currentRoomName))
+						room = roomInfoList.get(GIM.currentRoomName);
+					else
+					{
+						System.out.println("아직 룸인포가 도착하지 않음 return");
+						return;
+					}
+				}
+				synRoomInfoWithServer();
+				currentRoom = new RoomLobby(room.roomName);
+				GIM.currentRoomName = room.roomName;
+			}
+		});
+		systemObject.add(createButton);
+		// MakeGame
 		backButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		backButton.setContentAreaFilled(false); // 채우지마
 		backButton.setBounds(1182, 20, 52, 47);

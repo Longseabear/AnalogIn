@@ -32,7 +32,7 @@ public class Analogin extends JFrame {
 		setLayout(null);
 
 		//init key
-		SceneManager.createScene("Start");
+		SceneManager.createScene("GamePlaying");
 	}
 	
 	public void changeScene(SceneManager preScene, String str){

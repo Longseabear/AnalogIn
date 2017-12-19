@@ -4,12 +4,12 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 
 public class Scene_GameLoading extends SceneManager {
@@ -109,25 +109,29 @@ public class Scene_GameLoading extends SceneManager {
 					try{
 						System.out.println(NetworkPeerManager.peers.size() + " " + (GIM.playingGameRoom.User.size()-1));
 						NetworkPeerManager.peers.wait();					
-					}catch(Exception e){}
+					}catch(Exception e){e.printStackTrace();}
 				}
 			}
 			try {
-				Thread.sleep(500);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			System.out.println("[GAME_LOADING] NETWORK_PEER_INFO SENDING!!");
+			System.out.println("peersSize = " + NetworkPeerManager.peers.size());
 			for(NetworkPeer p : NetworkPeerManager.peers)
 			{
-				if(p==NetworkPeerManager.peers.get(0))
-					continue;
 				p.mapInfoSend();
 			}
 			// 연결이 완료되었으니 유저의 요청을 듣는다
-			// 
-			for(int i=1;i!=NetworkPeerManager.peers.size();i++)
+			System.out.println("CONNECTION SUCCESS ");
+			System.out.println("peersSize = " + NetworkPeerManager.peers.size());
+			for(int i=0;i<NetworkPeerManager.peers.size();i++)
 			{
+				System.out.println("[GAME_LOADING]"+ i + " connection start");
+
 				NetworkPeer p = NetworkPeerManager.peers.get(i);
 				while(true){
 					try {
@@ -138,15 +142,19 @@ public class Scene_GameLoading extends SceneManager {
 						e.printStackTrace();
 					}
 					String res = null;
+					System.out.println("P2P INFO를 받음");
 					// 여러처리 OK이면 break;
 					synchronized (p.networkJar) {
-						res = (String)p.networkJar.get("FILE_REQUEST_BI");
-						p.networkJar.remove("FILE_REQUEST_BI");
+						res = (String)p.networkJar.get("FILE_REQUEST_BUFFEREDIMAGE");
+						p.networkJar.remove("FILE_REQUEST_BUFFEREDIMAGE");
+						System.out.println("REs : " + res);
 					}
 					if(!res.equals("ACK")){
 						try {
-							BufferedImage img = ImageIO.read(new File(GIM.dir + res));
-							p.SenderObject(img);
+					        FileInputStream fis = new FileInputStream(new File(GIM.dir + res));
+					        byte[] buffer = new byte[fis.available()];
+					        fis.read(buffer);
+							p.SenderObject(buffer);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -158,8 +166,8 @@ public class Scene_GameLoading extends SceneManager {
 				}
 			}
 			// 끝 이제 게임을 시작하면 됨. 나머지 3명에게 게임스타트를 보내주고, 3초로 맞춘다음 스타트.
-			
 		}
+		System.out.println("[ok setting completion");
 		//Connection OK
 		GIM.GameObject.repaint();
 	}

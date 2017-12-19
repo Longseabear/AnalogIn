@@ -47,9 +47,8 @@ class Handler extends Thread {
 			}
 		} catch (InterruptedException e) {
 			e.getStackTrace();
-			System.out.println(" 2error");
+			System.out.println("2error");
 		}
-
 	}
 
 	// LOBBY_STATE_CHANGE
@@ -101,7 +100,7 @@ class Handler extends Thread {
 	// FILE_JAR
 	public void job5() {
 		try {
-			synchronized (NetworkRoomServer.networkJar) {
+			synchronized (networkJar) {
 				while (!networkJar.containsKey(this.getName())) {
 					networkJar.wait();
 				}
@@ -115,8 +114,8 @@ class Handler extends Thread {
 	// FILE_JAR
 		public void job6() {
 			try {
-				synchronized (NetworkRoomServer.networkJar) {
-					while (!networkJar.containsKey(this.getName())) {
+				synchronized (networkJar) {
+					while (!networkJar.containsKey("FILE_REQUEST_BUFFEREDIMAGE")) {
 						networkJar.wait();
 					}
 					networkJar.notifyAll();

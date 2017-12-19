@@ -666,7 +666,6 @@ public class Scene_CreateGame extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				ArrayList<BlockInformation> blockInfo = null;
-				//save
 				String loadpath = SaveLoadManager.getLoadDirectory();
 				if(loadpath!=null)
 					blockInfo = SaveLoadManager.loadMap(loadpath);

@@ -67,7 +67,7 @@ public class Scene_Start extends SceneManager {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				Scene_Start.gameJoin(idTextField.getText());
+				GIM.GameObject.changeScene(thisInstance, "CreateGame");
 			}
 		});
 		systemObject.add(createBlockButton);

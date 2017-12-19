@@ -79,7 +79,6 @@ public class SaveLoadManager {
 			int index = path.lastIndexOf("\\");
 			Path p = Paths.get(path);
 			String forderPath = p.getParent().toString() + "\\";
-
 			
 			ois = new ObjectInputStream(new FileInputStream(path));			
 			
@@ -90,6 +89,11 @@ public class SaveLoadManager {
 			for(int i=0;i!=blockInformation.size();i++){
 				blockInformation.get(i).imagePath = forderPath+imagePathList.get(i);
 			}
+			GIM.dir = forderPath;
+			GIM.loadedBlockInfo = blockInformation;
+			GIM.gmaeName = gameName;
+			GIM.rule = rule;
+			GIM.imageName = imagePathList;
 			return blockInformation;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
