@@ -20,6 +20,7 @@ public class ImageManager {
 	static final Image testButtonImage_4 = new ImageIcon(Main.class.getResource("../image/Rule.png")).getImage();
 	static final Image testButtonImage_5 = new ImageIcon(Main.class.getResource("../image/exit.png")).getImage();
 	static final Image testButtonImage_6 = new ImageIcon(Main.class.getResource("../image/voice.png")).getImage();
+	static final Image checkImage = new ImageIcon(Main.class.getResource("../image/check.png")).getImage();
 	
 	//Opening
 	static final Image Opening = new ImageIcon(Main.class.getResource("../image/opening.jpg")).getImage();	
