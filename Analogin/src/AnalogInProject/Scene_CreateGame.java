@@ -36,6 +36,8 @@ public class Scene_CreateGame extends SceneManager {
 	/************************************************
 	 * Component/object
 	 *************************************************/
+	
+	public static boolean calling = false;
 	private Scene_CreateGame thisInstance = this; // thisInstance
 	private JButton createBlockButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
@@ -50,7 +52,8 @@ public class Scene_CreateGame extends SceneManager {
 	private JButton exitButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	public JButton setupButton = new JButton(
-			new ImageIcon(ImageManager.setupImage.getScaledInstance(350, 350, Image.SCALE_SMOOTH)));
+			new ImageIcon(ImageManager.setupImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+	
 	public JTextField blockNameTextField = new JTextField();
 	public JTextField posXTextField = new JTextField();
 	public JTextField posYTextField = new JTextField();
@@ -62,6 +65,7 @@ public class Scene_CreateGame extends SceneManager {
 	private JButton frontButton = new JButton();
 	private JButton topButton = new JButton();
 	private JButton bottomButton = new JButton();
+	
 	private JLabel createBlockField = new JLabel();
 
 	/************************************************
@@ -534,7 +538,8 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		systemObject.add(imageLoadButton);
-
+		
+		
 		// delete button
 		deleteButton.setBounds(1146, 90, 100, 100);
 		deleteButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
@@ -744,7 +749,7 @@ public class Scene_CreateGame extends SceneManager {
 
 	public void screenDraw(Graphics g) {
 		g.drawImage(background, 0, 0, 1280, 720, null);
-		g.drawImage(image_subFrame, 890, 35, 375, 670, null);
+		g.drawImage(image_subFrame, 890, 35, 375, 670, null); 
 		g.drawImage(image_mainFrame, 15, 35, 860, 670, null);
 
 		GIM.GameObject.paintComponents(g);
