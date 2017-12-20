@@ -6,6 +6,10 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -83,8 +87,8 @@ public class Scene_CreateGame extends SceneManager {
 		//
 		GIM.currentScene = this;
 		// Input 등록
-//		GIM.keyInputBuffer = new KeyInputController();
-//		GIM.keyInputBuffer.start();
+		// GIM.keyInputBuffer = new KeyInputController();
+		// GIM.keyInputBuffer.start();
 		GIM.blockObject = blockObject;
 
 		// Block의 우선순위
@@ -115,13 +119,13 @@ public class Scene_CreateGame extends SceneManager {
 		blockNameTextField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				if(GIM.getCheckdBlock()!=null)
+				if (GIM.getCheckdBlock() != null)
 					GIM.getCheckdBlock().blockInfo.blockName = blockNameTextField.getText();
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				if(GIM.getCheckdBlock()!=null)
+				if (GIM.getCheckdBlock() != null)
 					GIM.getCheckdBlock().blockInfo.blockName = blockNameTextField.getText();
 			}
 
@@ -230,7 +234,7 @@ public class Scene_CreateGame extends SceneManager {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							GIM.getCheckdBlock().blockInfo.width = Integer.parseInt(val);
-							
+
 							GIM.getCheckdBlock().synBlockImage();
 						}
 					});
@@ -324,15 +328,13 @@ public class Scene_CreateGame extends SceneManager {
 			public void mousePressed(MouseEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if(GIM.getCheckdBlock()!=null && GIM.getCheckdBlock().blockInfo.isStatic)
-						{
+						if (GIM.getCheckdBlock() != null && GIM.getCheckdBlock().blockInfo.isStatic) {
 							staticButton.setIcon(null);
 							GIM.getCheckdBlock().blockInfo.isStatic = false;
-						}
-						else
-						{
-							staticButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-							GIM.getCheckdBlock().blockInfo.isStatic = true;							
+						} else {
+							staticButton.setIcon(new ImageIcon(
+									ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+							GIM.getCheckdBlock().blockInfo.isStatic = true;
 						}
 					}
 				});
@@ -345,7 +347,8 @@ public class Scene_CreateGame extends SceneManager {
 		visibleButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		visibleButton.setContentAreaFilled(false); // 채우지마
 		visibleButton.setFocusPainted(false);
-		visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+		visibleButton
+				.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
 		visibleButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -363,16 +366,14 @@ public class Scene_CreateGame extends SceneManager {
 			public void mousePressed(MouseEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if(GIM.getCheckdBlock()!=null && GIM.getCheckdBlock().blockInfo.isVisible)
-						{
+						if (GIM.getCheckdBlock() != null && GIM.getCheckdBlock().blockInfo.isVisible) {
 							visibleButton.setIcon(null);
 							GIM.getCheckdBlock().blockInfo.isVisible = false;
 							GIM.getCheckdBlock().setVisible(false);
-						}
-						else
-						{
-							visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-							GIM.getCheckdBlock().blockInfo.isVisible = true;							
+						} else {
+							visibleButton.setIcon(new ImageIcon(
+									ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+							GIM.getCheckdBlock().blockInfo.isVisible = true;
 							GIM.getCheckdBlock().setVisible(true);
 						}
 					}
@@ -543,15 +544,7 @@ public class Scene_CreateGame extends SceneManager {
 		deleteButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // 이벤트
-																		// 처리는
-																		// createBlock이랑
-																		// 똑같이
-																		// 설정되어있음
-																		// 누르면
-																		// rule이
-																		// 뜨게
-																		// 해야함
+				deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 
 			@Override
@@ -574,7 +567,7 @@ public class Scene_CreateGame extends SceneManager {
 		createBlockField.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-//				System.out.println(e.getX() + " " + e.getY());
+				// System.out.println(e.getX() + " " + e.getY());
 				Block b = new Block(new BlockInformation(e.getX(), e.getY(), 30, 30, ""), 1);
 				blockObject.add(b);
 				GIM.GameObject.add(b, GIM.blockPriority);
@@ -609,7 +602,7 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		systemObject.add(ruleButton);
-		
+
 		// save button
 		saveButton.setBounds(1090, 580, 175, 50);
 		saveButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
@@ -631,13 +624,12 @@ public class Scene_CreateGame extends SceneManager {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				//save
+				// save
 				String gameName = Scene_CreateGame.setGameName();
 				String saveforder = SaveLoadManager.getSaveDirectory();
-						
-				if(saveforder!=null && !gameName.equals(""))
-				{
-					if(SaveLoadManager.saveMap(blockObject, saveforder, GIM.rule, gameName))
+
+				if (saveforder != null && !gameName.equals("")) {
+					if (SaveLoadManager.saveMap(blockObject, saveforder, GIM.rule, gameName))
 						System.out.println("Save Success");
 					else
 						System.out.println("Save Fail");
@@ -669,7 +661,7 @@ public class Scene_CreateGame extends SceneManager {
 			public void mousePressed(MouseEvent e) {
 				ArrayList<BlockInformation> blockInfo = null;
 				String loadpath = SaveLoadManager.getLoadDirectory();
-				if(loadpath!=null)
+				if (loadpath != null)
 					blockInfo = SaveLoadManager.loadMap(loadpath);
 				GIM.loadedBlockInfo = blockInfo;
 				GIM.GameObject.changeScene(thisInstance, "CreateGame");
@@ -700,16 +692,15 @@ public class Scene_CreateGame extends SceneManager {
 			}
 		});
 		systemObject.add(exitButton);
-		
+
 		// CACHE
-		if(GIM.loadedBlockInfo!=null){
-			for(BlockInformation f : GIM.loadedBlockInfo){
-				blockObject.add(new Block(f,1));
+		if (GIM.loadedBlockInfo != null) {
+			for (BlockInformation f : GIM.loadedBlockInfo) {
+				blockObject.add(new Block(f, 1));
 			}
 			GIM.loadedBlockInfo = null;
 		}
-		
-		
+
 		for (Component b : systemObject) {
 			GIM.GameObject.add(b);
 		}
@@ -720,6 +711,29 @@ public class Scene_CreateGame extends SceneManager {
 		for (Thread t : backendObject) {
 			t.start();
 		}
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+						System.out.println("start");
+						if (GIM.getCheckdBlock() != null) {
+							BlockInformation f = new BlockInformation(GIM.getCheckdBlock().blockInfo);
+							f.x += 10;
+							f.y += 10;
+							Block b = new Block(f, 1);
+							blockObject.add(b);
+							GIM.GameObject.add(b, GIM.blockPriority);
+							System.out.println("ok");
+						}
+
+					}
+				}
+				return false;
+			}
+		});
+
 		GIM.GameObject.repaint();
 
 		// introMusic = new Audio("testMusic.mp3", true); 자꾸 에러나서 주석처리 해놓음
@@ -750,13 +764,12 @@ public class Scene_CreateGame extends SceneManager {
 		GIM.GameObject.paintComponents(g);
 		GIM.GameObject.repaint();
 	}
+
 	private static String setGameName() {
-        return JOptionPane.showInputDialog(
-            GIM.GameObject,
-            "Input Game Name",
-            "Welcome to the making!",
-            JOptionPane.QUESTION_MESSAGE);
-    }
+		return JOptionPane.showInputDialog(GIM.GameObject, "Input Game Name", "Welcome to the making!",
+				JOptionPane.QUESTION_MESSAGE);
+	}
+
 	// UTIL
 	public static boolean isNum(String s) {
 		try {

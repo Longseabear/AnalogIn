@@ -35,6 +35,7 @@ public class Block extends JLabel {
 			blockInfo.setImagePath(blockInfo.imagePath);
 		}
 		synBlockInfo();
+		
 		// initialize
 		this.addMouseListener(new MouseAdapter() {
 			@Override
@@ -104,7 +105,7 @@ public class Block extends JLabel {
 					GameObject.remove(gameObject);
 					GameObject.add(gameObject, 0);
 					GIM.blockObject.remove(gameObject);
-					GIM.blockObject.add(gameObject);					
+					GIM.blockObject.add(0,gameObject);
 				}
 			}
 
