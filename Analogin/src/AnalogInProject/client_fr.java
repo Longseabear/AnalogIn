@@ -28,58 +28,7 @@ public class client_fr extends JFrame {
 	TargetDataLine audio_in;
 
 
-	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					client_fr frame = new client_fr();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	public client_fr() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
-		
-		jLabell = new JLabel("                              Client Voice");
-		jLabell.setFont(new Font("210 ∏«πﬂ¿«√ª√· B", Font.PLAIN, 17));
-		contentPane.add(jLabell, BorderLayout.NORTH);
-		
-		JPanel panel = new JPanel();
-		contentPane.add(panel, BorderLayout.CENTER);
-		
-		btn_start = new JButton("Start");
-		btn_start.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				init_audio();
-				
-			}
-		});
-		panel.add(btn_start);
-		
-		btn_stop = new JButton("Stop");
-		btn_stop.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Client_voice.calling = false;
-				btn_start.setEnabled(true);
-				btn_stop.setEnabled(false);
-			}
-		});
-		panel.add(btn_stop);
-	}
 	public void init_audio() {
 		try {
 			AudioFormat format = getAudioFormat();
@@ -105,7 +54,4 @@ public class client_fr extends JFrame {
 			Logger.getLogger(client_fr.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-	private javax.swing.JButton btn_start;
-	private javax.swing.JButton btn_stop;
-	private javax.swing.JLabel jLabell;
 }
