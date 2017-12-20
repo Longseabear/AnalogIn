@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Analogin/src"/>
+	<classpathentry excluding="AnalogInProject/" kind="src" path="AnaloginServer/src"/>
+	<classpathentry kind="src" path="AnaloginServer/src/AnalogInProject"/>
+	<classpathentry kind="lib" path="Analogin/jarFile/jl1.0.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

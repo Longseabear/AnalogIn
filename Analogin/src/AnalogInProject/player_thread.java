@@ -1,4 +1,4 @@
-package server_voice;
+package AnalogInProject;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
