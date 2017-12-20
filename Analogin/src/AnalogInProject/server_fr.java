@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 @SuppressWarnings("serial")
 public class server_fr extends JFrame {
 	
-	public static int port= 8888;
+	//public static int port= 8888;
 	
 	public static AudioFormat getAudioFormat() {
 		float sampleRate = 8000.0F;
@@ -47,7 +47,7 @@ public class server_fr extends JFrame {
 			audio_out.open(format);
 			audio_out.start();
 			player_thread p = new player_thread();
-			p.din = new DatagramSocket(port);
+			p.din = new DatagramSocket(Scene_GamePlaying.port);
 			p.audio_out = audio_out;
 			Server_voice.calling = true;
 			p.start();

@@ -12,11 +12,9 @@ import java.net.*;
 import java.util.logging.*;
 
 @SuppressWarnings("serial")
-public class client_fr extends JFrame {
-	
-
-	public int port_server = 8888;
-	public String add_server = "127.0.0.1";
+public class client_fr {
+	public static int port_server = 8888;
+	public static String add_server = "127.0.0.1";
 	public static AudioFormat getAudioFormat() {
 		float sampleRate = 8000.0F;
 		int sampleSizeInbits = 16;
@@ -25,11 +23,9 @@ public class client_fr extends JFrame {
 		boolean bigEndian = false;
 		return new AudioFormat (sampleRate, sampleSizeInbits, channel, signed, bigEndian);
 	}
-	TargetDataLine audio_in;
-
-
-
-	public void init_audio() {
+	static TargetDataLine audio_in;
+	
+	public static void init_audio() {
 		try {
 			AudioFormat format = getAudioFormat();
 			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
@@ -48,8 +44,8 @@ public class client_fr extends JFrame {
 			r.server_port = port_server;
 			Client_voice.calling = true;
 			r.start();
-			btn_start.setEnabled(false);
-			btn_stop.setEnabled(true);
+			Scene_GamePlaying.VoicechatButton.setEnabled(false);
+			Scene_GamePlaying.VoicechatButton.setEnabled(true);
 		} catch (LineUnavailableException | UnknownHostException | SocketException ex) {
 			Logger.getLogger(client_fr.class.getName()).log(Level.SEVERE, null, ex);
 		}

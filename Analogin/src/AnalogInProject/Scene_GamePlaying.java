@@ -35,7 +35,7 @@ public class Scene_GamePlaying extends SceneManager {
 	// Music
 	// private Audio introMusic;
 
-	public int port= 8888;
+	public static int port= 8888;
 	
 	// get audio format for voice chat
 	public static AudioFormat getAudioFormat() {
@@ -46,7 +46,8 @@ public class Scene_GamePlaying extends SceneManager {
 		boolean bigEndian = false;
 		return new AudioFormat (sampleRate, sampleSizeInbits, channel, signed, bigEndian);
 	}
-	public static boolean startVoiceChat = false;
+	
+	
 	
 	public SourceDataLine audio_out;
 	
@@ -86,7 +87,7 @@ public class Scene_GamePlaying extends SceneManager {
 
 	public void init() throws IOException {
 		server_fr.init_audio();
-		System.out.println("******Voice chat server start");
+		System.out.println("******Voice chat server start**********");
 	}
 
 	/// GAME APPLICATION이 실행될 때 반드시 초기화해야하는 GIM 변수
@@ -343,16 +344,10 @@ public class Scene_GamePlaying extends SceneManager {
 			public void mouseExited(MouseEvent e) {
 				VoicechatButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
-			
+			boolean audioStart = true;
 			public void mousePressed(MouseEvent e) {
-				if(!startVoiceChat) {
-					startVoiceChat = true;
-				}
-				else {
-					
-				}
+				client_fr.init_audio();
 			}
-			
 		});
 		systemObject.add(VoicechatButton);
 		
