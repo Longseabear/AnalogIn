@@ -344,7 +344,6 @@ public class Scene_GamePlaying extends SceneManager {
 			public void mouseExited(MouseEvent e) {
 				VoicechatButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
-			boolean audioStart = true;
 			public void mousePressed(MouseEvent e) {
 				client_fr.init_audio();
 			}
