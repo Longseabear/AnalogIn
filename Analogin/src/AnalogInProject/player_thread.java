@@ -14,20 +14,21 @@ public class player_thread extends Thread{
 	public DatagramSocket din;
 	public SourceDataLine audio_out;
 	byte[] buffer = new byte[512];
-	private static HashSet<DatagramSocket> writers = new HashSet<DatagramSocket>();
+	private static HashSet<DatagramPacket> writers = new HashSet<DatagramPacket>();
 	@Override
 	public void run() {
-		writers.add(din);
+		
 		DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
+		
 		while(Server_voice.calling) {
 			try {
-				for(DatagramSocket writer : writers) {
-					writer.receive(incoming);
-					buffer = incoming.getData();
+				for(DatagramPacket writer : writers) {
+					din.receive(writer);
+					buffer = writer.getData();
 					audio_out.write(buffer, 0, buffer.length);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				// TODO Auto-generated ca	tch block
 				Logger.getLogger(player_thread.class.getName()).log(Level.SEVERE, null, e);
 			}
 		}
