@@ -58,11 +58,11 @@ public class blockChangedListener extends Thread{
 							if(!GIM.getCheckdBlock().blockInfo.isStatic)
 								scene.staticButton.setIcon(null);
 							else
-								scene.staticButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+								scene.staticButton.setIcon(new ImageIcon(ImageManager.checkImage.getScaledInstance(27, 27, Image.SCALE_SMOOTH)));
 							if(!GIM.getCheckdBlock().blockInfo.isVisible)
 								scene.visibleButton.setIcon(null);
 							else
-								scene.visibleButton.setIcon(new ImageIcon(ImageManager.testButtonImage_1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+								scene.visibleButton.setIcon(new ImageIcon(ImageManager.checkImage.getScaledInstance(27, 27, Image.SCALE_SMOOTH)));
 	
 						}
 					});

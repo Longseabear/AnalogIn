@@ -334,7 +334,7 @@ public class Scene_CreateGame extends SceneManager {
 							GIM.getCheckdBlock().blockInfo.isStatic = false;
 						} else {
 							staticButton.setIcon(new ImageIcon(
-									ImageManager.checkImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+									ImageManager.checkImage.getScaledInstance(27, 27, Image.SCALE_SMOOTH)));
 							GIM.getCheckdBlock().blockInfo.isStatic = true;
 						}
 					}
@@ -348,8 +348,7 @@ public class Scene_CreateGame extends SceneManager {
 		visibleButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		visibleButton.setContentAreaFilled(false); // 채우지마
 		visibleButton.setFocusPainted(false);
-		visibleButton
-				.setIcon(new ImageIcon(ImageManager.checkImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+		visibleButton.setIcon(new ImageIcon(ImageManager.checkImage.getScaledInstance(27, 27, Image.SCALE_SMOOTH)));
 		visibleButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -373,7 +372,7 @@ public class Scene_CreateGame extends SceneManager {
 							GIM.getCheckdBlock().setVisible(false);
 						} else {
 							visibleButton.setIcon(new ImageIcon(
-									ImageManager.checkImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+									ImageManager.checkImage.getScaledInstance(27, 27, Image.SCALE_SMOOTH)));
 							GIM.getCheckdBlock().blockInfo.isVisible = true;
 							GIM.getCheckdBlock().setVisible(true);
 						}
