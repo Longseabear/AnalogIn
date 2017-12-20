@@ -21,7 +21,7 @@ public class recorder_thread extends Thread{
 			try {
 				audio_in.read(byte_buff, 0, byte_buff.length);
 				DatagramPacket data = new DatagramPacket(byte_buff, byte_buff.length, server_ip, server_port);
-				//System.err.println("send #"+ (num++));
+				System.err.println("send #"+ (num++));
 				
 				dout.send(data);
 			} catch (IOException e) {

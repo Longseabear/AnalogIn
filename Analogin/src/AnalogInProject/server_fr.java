@@ -6,6 +6,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+
 import javax.swing.JLabel;
 import java.awt.Font;
 
@@ -35,6 +37,19 @@ public class server_fr extends JFrame {
 	}
 	public static SourceDataLine audio_out;
 	
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					server_fr frame = new server_fr();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public static void init_audio() {
 		try {
 			AudioFormat format = getAudioFormat();
@@ -43,6 +58,7 @@ public class server_fr extends JFrame {
 				System.out.println("not supported");
 				System.exit(0);
 			}
+			System.out.println("Hello");
 			audio_out = (SourceDataLine)AudioSystem.getLine(info_out);
 			audio_out.open(format);
 			audio_out.start();
@@ -51,7 +67,7 @@ public class server_fr extends JFrame {
 			p.audio_out = audio_out;
 			Server_voice.calling = true;
 			p.start();
-			Scene_GamePlaying.VoicechatButton.setEnabled(false);
+			//Scene_GamePlaying.VoicechatButton.setEnabled(false);
 			
 		} catch (LineUnavailableException | SocketException e) {
 			// TODO Auto-generated catch block

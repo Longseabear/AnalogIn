@@ -14,7 +14,7 @@ import java.util.logging.*;
 @SuppressWarnings("serial")
 public class client_fr {
 	public static int port_server = 8888;
-	public static String add_server = "127.0.0.1";
+	public static String add_server = "210.90.135.149";
 	public static AudioFormat getAudioFormat() {
 		float sampleRate = 8000.0F;
 		int sampleSizeInbits = 16;

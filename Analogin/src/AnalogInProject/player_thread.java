@@ -1,7 +1,6 @@
 package AnalogInProject;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.logging.Level;
@@ -14,26 +13,22 @@ public class player_thread extends Thread{
 	public DatagramSocket din;
 	public SourceDataLine audio_out;
 	byte[] buffer = new byte[512];
-	private static HashSet<DatagramPacket> writers = new HashSet<DatagramPacket>();
+	private static HashSet<DatagramSocket> writers = new HashSet<DatagramSocket>();
 	@Override
 	public void run() {
-		
+		writers.add(din);
 		DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
-		writers.add(incoming);
-		while(Server_voice.calling) {
+		while(true) {
 			try {
-				for(DatagramPacket writer : writers) {
-					din.receive(writer);
-					buffer = writer.getData();
+				for(DatagramSocket writer : writers) {
+					writer.receive(incoming);
+					buffer = incoming.getData();
 					audio_out.write(buffer, 0, buffer.length);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated ca	tch block
+				// TODO Auto-generated catch block
 				Logger.getLogger(player_thread.class.getName()).log(Level.SEVERE, null, e);
 			}
 		}
-		audio_out.close();
-		audio_out.drain();
-		System.out.println("voice chat stop");
 	}
 }

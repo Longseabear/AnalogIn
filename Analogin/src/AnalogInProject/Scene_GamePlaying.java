@@ -86,8 +86,7 @@ public class Scene_GamePlaying extends SceneManager {
 	Font font1 = new Font("SansSerif", Font.BOLD, 11);
 
 	public void init() throws IOException {
-		server_fr.init_audio();
-		System.out.println("******Voice chat server start**********");
+		
 	}
 
 	/// GAME APPLICATION이 실행될 때 반드시 초기화해야하는 GIM 변수
@@ -345,7 +344,9 @@ public class Scene_GamePlaying extends SceneManager {
 				VoicechatButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 			public void mousePressed(MouseEvent e) {
+				System.out.println("Hello");
 				client_fr.init_audio();
+				
 			}
 		});
 		systemObject.add(VoicechatButton);
