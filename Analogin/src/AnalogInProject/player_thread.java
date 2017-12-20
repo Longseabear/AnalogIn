@@ -19,7 +19,7 @@ public class player_thread extends Thread{
 	public void run() {
 		
 		DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
-		
+		writers.add(incoming);
 		while(Server_voice.calling) {
 			try {
 				for(DatagramPacket writer : writers) {
