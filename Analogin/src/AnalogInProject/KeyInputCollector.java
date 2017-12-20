@@ -10,12 +10,12 @@ public class KeyInputCollector extends Thread {
 //	int currentTime = (int)System.nanoTime();
 	public ArrayList<String> input0 = new ArrayList<String>();
 	public ArrayList<String> input1 = new ArrayList<String>();
-	public int[] currentTime = new int[2];
-	public int[] communicationTime = new int[2];
+	public long[] currentTime = new long[2];
+	public long[] communicationTime = new long[2];
 	
 	public void startCollection(int _turn){
 		turn = _turn;
-		currentTime[_turn] = (int)System.nanoTime(); // new Turn Collection start
+		currentTime[_turn] = System.nanoTime(); // new Turn Collection start
 	}
 	public KeyInputCollector(int _turn){
 		turn = _turn;
@@ -28,10 +28,10 @@ public class KeyInputCollector extends Thread {
 	}
 	public synchronized void playIn(String s) {
 		if(turn==0){
-			input0.add(GIM.me.id+"_"+s + "_" + ((int) System.nanoTime() - currentTime[turn]));			
+			input0.add(GIM.me.id+"_"+s + "_" + ( System.nanoTime() - currentTime[turn]));			
 		}
 		else{
-			input1.add(GIM.me.id+"_"+s + "_" + ((int) System.nanoTime() - currentTime[turn]));			
+			input1.add(GIM.me.id+"_"+s + "_" + ( System.nanoTime() - currentTime[turn]));			
 		}
 	}
 }

@@ -39,9 +39,22 @@ public class BlockInformation implements Serializable{
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{			
-			image = ImageManager.nullImage.getScaledInstance(_width, _height, Image.SCALE_SMOOTH);;
+			image = ImageManager.nullImage.getScaledInstance(_width, _height, Image.SCALE_SMOOTH);
 		}
-
+	}
+	public BlockInformation(BlockInformation blockInfo) {
+		x = blockInfo.x;
+		y = blockInfo.y;
+		width = blockInfo.width;
+		height = blockInfo.height;
+		imagePath = blockInfo.imagePath;
+		try{
+			image = new ImageIcon(blockInfo.imagePath).getImage();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{			
+			image = ImageManager.nullImage.getScaledInstance(blockInfo.width, blockInfo.height, Image.SCALE_SMOOTH);
+		}
 	}
 	public void setImagePath(String _imagePath)
 	{
