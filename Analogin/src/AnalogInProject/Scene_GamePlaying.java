@@ -9,8 +9,15 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +35,21 @@ public class Scene_GamePlaying extends SceneManager {
 	// Music
 	// private Audio introMusic;
 
+	public int port= 8888;
+	
+	// get audio format for voice chat
+	public static AudioFormat getAudioFormat() {
+		float sampleRate = 8000.0F;
+		int sampleSizeInbits = 16;
+		int channel = 2;
+		boolean signed = true;
+		boolean bigEndian = false;
+		return new AudioFormat (sampleRate, sampleSizeInbits, channel, signed, bigEndian);
+	}
+	public static boolean startVoiceChat = false;
+	
+	public SourceDataLine audio_out;
+	
 	// Image
 	private Image background = ImageManager.background;
 	private Image image_mainFrame = ImageManager.mainFrame;
@@ -51,7 +73,7 @@ public class Scene_GamePlaying extends SceneManager {
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	public JButton setupButton = new JButton(
 			new ImageIcon(ImageManager.setupImage.getScaledInstance(350, 350, Image.SCALE_SMOOTH)));
-	private JButton VoicechatButton = new JButton(
+	public static JButton VoicechatButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_6.getScaledInstance(50,  50,  Image.SCALE_SMOOTH)));
 	private JLabel createBlockField = new JLabel();
 
@@ -63,6 +85,8 @@ public class Scene_GamePlaying extends SceneManager {
 	Font font1 = new Font("SansSerif", Font.BOLD, 11);
 
 	public void init() throws IOException {
+		server_fr.init_audio();
+		System.out.println("******Voice chat server start");
 	}
 
 	/// GAME APPLICATION이 실행될 때 반드시 초기화해야하는 GIM 변수
@@ -309,6 +333,7 @@ public class Scene_GamePlaying extends SceneManager {
 		VoicechatButton.setBorderPainted(true);
 		VoicechatButton.setContentAreaFilled(false);
 		VoicechatButton.setFocusPainted(false);
+		VoicechatButton.setVisible(true);
 		VoicechatButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -319,8 +344,19 @@ public class Scene_GamePlaying extends SceneManager {
 				VoicechatButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 			
+			public void mousePressed(MouseEvent e) {
+				if(!startVoiceChat) {
+					startVoiceChat = true;
+				}
+				else {
+					
+				}
+			}
+			
 		});
 		systemObject.add(VoicechatButton);
+		
+		
 		
 		// CACHE
 		System.out.println("loadedBlockInfo load start");

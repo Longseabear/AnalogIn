@@ -28,6 +28,6 @@ public class player_thread extends Thread{
 		}
 		audio_out.close();
 		audio_out.drain();
-		System.out.println("stop");
+		System.out.println("voice chat stop");
 	}
 }
