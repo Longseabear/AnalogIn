@@ -51,6 +51,8 @@ public class Scene_GamePlaying extends SceneManager {
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	public JButton setupButton = new JButton(
 			new ImageIcon(ImageManager.setupImage.getScaledInstance(350, 350, Image.SCALE_SMOOTH)));
+	private JButton VoicechatButton = new JButton(
+			new ImageIcon(ImageManager.testButtonImage_6.getScaledInstance(50,  50,  Image.SCALE_SMOOTH)));
 	private JLabel createBlockField = new JLabel();
 
 	/************************************************
@@ -302,6 +304,23 @@ public class Scene_GamePlaying extends SceneManager {
 			}
 		});
 		systemObject.add(exitButton);
+		
+		VoicechatButton.setBounds(1146, 33, 50, 50);
+		VoicechatButton.setBorderPainted(true);
+		VoicechatButton.setContentAreaFilled(false);
+		VoicechatButton.setFocusPainted(false);
+		VoicechatButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				VoicechatButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				VoicechatButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			
+		});
+		systemObject.add(VoicechatButton);
 		
 		// CACHE
 		System.out.println("loadedBlockInfo load start");
