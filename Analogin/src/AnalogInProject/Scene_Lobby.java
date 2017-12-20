@@ -27,7 +27,7 @@ public class Scene_Lobby extends SceneManager {
 	// private Audio introMusic;
 	private JButton backButton = new JButton();
 	private JButton createButton = new JButton();
-	
+	private JButton ruleButton = new JButton();	
 	// Image
 	private Image background = ImageManager.Lobby;
 
@@ -133,6 +133,8 @@ public class Scene_Lobby extends SceneManager {
 					synRoomInfoWithServer();
 					currentRoom = new RoomLobby(room.roomName);
 					GIM.currentRoomName = room.roomName;
+				}else{
+					ruleButton.setText(((RoomInfo)roomList.getSelectedValue()).content);
 				}
 			}
 		});
@@ -170,9 +172,10 @@ public class Scene_Lobby extends SceneManager {
 					blockInfo = SaveLoadManager.loadMap(loadpath);
 				else{
 					System.out.println("LoadPathFail");
+					return;
 				}
-				GIM.loadedBlockInfo = blockInfo;
-				GIM.currentRoomName = "CHESS GAME!!" + (int)(Math.random()*100);
+				GIM.loadedBlockInfo = blockInfo;	
+				GIM.currentRoomName = GIM.getInputField("plz enter roomName", "input roomName");
 				
 				//GAME 이름 알고, RULE 아니까 그냥 생성하면 끝 gameName] [UserName] [RULE]
 				String res;
@@ -235,6 +238,13 @@ public class Scene_Lobby extends SceneManager {
 				GIM.GameObject.changeScene(thisInstance, "Start");
 			}
 		});
+		systemObject.add(ruleButton);
+		ruleButton.setBorderPainted(false); // 버튼 배치 테스트 때문에 true로 변경
+		ruleButton.setOpaque(true);
+		ruleButton.setContentAreaFilled(false); // 채우지마
+		ruleButton.setBounds(710, 150, 515, 440);
+		ruleButton.setFocusPainted(false);
+		ruleButton.setText("hello world");
 		systemObject.add(backButton);
 		// Input 등록
 

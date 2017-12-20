@@ -45,10 +45,8 @@ public class Scene_GamePlaying extends SceneManager {
 			new ImageIcon(ImageManager.testButtonImage_3.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	private JButton ruleButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
-	private JButton saveButton = new JButton(
-			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
-	private JButton loadButton = new JButton(
-			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
+	private JButton saveButton = new JButton();
+	private JButton loadButton = new JButton();
 	private JButton exitButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	public JButton setupButton = new JButton(
@@ -218,6 +216,8 @@ public class Scene_GamePlaying extends SceneManager {
 		saveButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		saveButton.setContentAreaFilled(false); // 채우지마
 		saveButton.setFocusPainted(false);
+		saveButton.setText("SAVE");
+
 		saveButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -253,6 +253,7 @@ public class Scene_GamePlaying extends SceneManager {
 		loadButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		loadButton.setContentAreaFilled(false); // 채우지마
 		loadButton.setFocusPainted(false);
+		loadButton.setText("LOAD");
 		loadButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {

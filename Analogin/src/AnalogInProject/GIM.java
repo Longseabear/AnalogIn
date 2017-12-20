@@ -2,6 +2,8 @@ package AnalogInProject;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class GIM {
 	// 부동 오브젝트
 	public static Analogin GameObject;
@@ -67,4 +69,12 @@ public class GIM {
 			keyInputBuffer.interrupt();
 		keyInputBuffer = null;
 	}
+	// G 
+	public static String getInputField(String str1, String str2) {
+        return JOptionPane.showInputDialog(
+            GIM.GameObject,
+            str1,
+            str2,
+            JOptionPane.QUESTION_MESSAGE);
+    }
 }

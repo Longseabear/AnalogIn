@@ -45,10 +45,8 @@ public class Scene_CreateGame extends SceneManager {
 			new ImageIcon(ImageManager.testButtonImage_3.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	private JButton ruleButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
-	private JButton saveButton = new JButton(
-			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
-	private JButton loadButton = new JButton(
-			new ImageIcon(ImageManager.testButtonImage_4.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
+	private JButton saveButton = new JButton();
+	private JButton loadButton = new JButton();
 	private JButton exitButton = new JButton(
 			new ImageIcon(ImageManager.testButtonImage_5.getScaledInstance(240, 320, Image.SCALE_SMOOTH)));
 	public JButton setupButton = new JButton(
@@ -606,6 +604,8 @@ public class Scene_CreateGame extends SceneManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				ruleButton.setVisible(true);
+				RuleFrame frame = new RuleFrame();
+				frame.setVisible(true);
 			}
 		});
 		systemObject.add(ruleButton);
@@ -615,6 +615,7 @@ public class Scene_CreateGame extends SceneManager {
 		saveButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		saveButton.setContentAreaFilled(false); // 채우지마
 		saveButton.setFocusPainted(false);
+		saveButton.setText("SAVE");
 		saveButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -636,7 +637,7 @@ public class Scene_CreateGame extends SceneManager {
 						
 				if(saveforder!=null && !gameName.equals(""))
 				{
-					if(SaveLoadManager.saveMap(blockObject, saveforder, "Chess rule", gameName))
+					if(SaveLoadManager.saveMap(blockObject, saveforder, GIM.rule, gameName))
 						System.out.println("Save Success");
 					else
 						System.out.println("Save Fail");
@@ -650,6 +651,7 @@ public class Scene_CreateGame extends SceneManager {
 		loadButton.setBorderPainted(true); // 버튼 배치 테스트 때문에 true로 변경
 		loadButton.setContentAreaFilled(false); // 채우지마
 		loadButton.setFocusPainted(false);
+		loadButton.setText("LOAD");
 		loadButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {

@@ -19,22 +19,6 @@ public class RuleFrame extends JFrame {
 
 	private JPanel contentPane;
 	public JTextField textField;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RuleFrame frame = new RuleFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -51,6 +35,7 @@ public class RuleFrame extends JFrame {
 		textField.setBounds(84, 110, 264, 47);
 		contentPane.add(textField);
 		textField.setColumns(10);
+		textField.setText(GIM.rule);
 		
 		JLabel lblWhatIsYour = new JLabel("What is your RULE?");
 		lblWhatIsYour.setFont(new Font("Times New Roman", Font.BOLD, 16));
@@ -61,12 +46,10 @@ public class RuleFrame extends JFrame {
 		btnEnter.setFont(new Font("Times New Roman", Font.BOLD, 12));
 		btnEnter.setBounds(169, 167, 97, 23);
 		contentPane.add(btnEnter);
-		Map ruleMap = new Map();
 		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ruleMap.str = textField.getText();
-				ruleMap.printStr();
-				textField.setText("");
+				GIM.rule = textField.getText();
+				dispose();
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
