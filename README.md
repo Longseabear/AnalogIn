@@ -1,4 +1,4 @@
-# AnalogIn
+# AnalogIn Project
 
 ### Computer Network Term Project
 
